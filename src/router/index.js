@@ -6,6 +6,11 @@ const routes = [
     name: "HelloWorld",
     component: () => import("../components/Primer.vue"),
   },
+  {
+    path: "/BufferGeometry",
+    name: "BufferGeometry",
+    component: () => import("../components/BufferGeometry.vue"),
+  },
 ];
 
 // 创建路由
