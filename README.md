@@ -1,4 +1,4 @@
-## introduce
+## Introduce
 
 基于 vue3+vite 的 three.js 学习代码项目。
 
