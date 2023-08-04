@@ -65,7 +65,7 @@ function getRandomMeshs() {
   for (let i = 0; i < num; i++) {
     let geometry = new THREE.BoxGeometry(5, 5, 5);
     if (i % 4 === 0) {
-      geometry = new THREE.SphereGeometry(5);
+      geometry = new THREE.SphereGeometry(5, 8, 8);
     } else if (i % 4 === 1) {
       geometry = new THREE.CylinderGeometry(5, 5, 10);
     } else if (i % 4 === 2) {
@@ -91,6 +91,7 @@ function getRandomMeshs() {
       color: generateRandomColor(),
       shininess: 20, //高光部分的亮度，默认30
       specular: 0x444444, //高光部分的颜色
+      wireframe: true,
     });
 
     const mesh = new THREE.Mesh(geometry, material);
