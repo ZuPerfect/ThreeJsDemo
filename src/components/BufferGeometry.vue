@@ -1,3 +1,11 @@
+<!--
+ * @Author: ZuPerfect 315698477@qq.com
+ * @Date: 2023-08-03 16:52:01
+ * @LastEditors: ZuPerfect 315698477@qq.com
+ * @LastEditTime: 2023-08-04 14:15:47
+ * @FilePath: \ThreeJsDemo\src\components\BufferGeometry.vue
+ * @Description: 几何体BufferGeometry;
+-->
 <template>
   <div id="webgl"></div>
 </template>

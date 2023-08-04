@@ -1,3 +1,12 @@
+<!--
+ * @Author: ZuPerfect 315698477@qq.com
+ * @Date: 2023-06-29 14:43:26
+ * @LastEditors: ZuPerfect 315698477@qq.com
+ * @LastEditTime: 2023-08-04 14:20:50
+ * @FilePath: \ThreeJsDemo\src\components\Primer.vue
+ * @Description:Three.js快速入门
+-->
+
 <template>
   <div id="webgl"></div>
 </template>

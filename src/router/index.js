@@ -11,6 +11,11 @@ const routes = [
     name: "BufferGeometry",
     component: () => import("../components/BufferGeometry.vue"),
   },
+  {
+    path: "/Earth",
+    name: "Earth",
+    component: () => import("../components/Earth.vue"),
+  },
 ];
 
 // 创建路由

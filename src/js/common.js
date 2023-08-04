@@ -56,3 +56,13 @@ export function addPointLight(scene, xyz = [200, 200, 200]) {
   scene.add(pointLightHelper);
   gui.add(pointLight, "intensity", 0, 2.0).name("光照强度").step(0.01);
 }
+
+export function addDirectionalLight(scene) {
+  // 平行光
+  const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+  // 设置光源的方向：通过光源position属性和目标指向对象的position属性计算
+  directionalLight.position.set(100, 100, 100);
+  // 方向光指向对象网格模型mesh，可以不设置，默认的位置是0,0,0
+  //   directionalLight.target = mesh;
+  scene.add(directionalLight);
+}
