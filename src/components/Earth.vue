@@ -2,7 +2,7 @@
  * @Author: ZuPerfect 315698477@qq.com
  * @Date: 2023-08-04 14:12:48
  * @LastEditors: ZuPerfect 315698477@qq.com
- * @LastEditTime: 2023-08-04 16:29:13
+ * @LastEditTime: 2023-08-04 17:43:00
  * @FilePath: \ThreeJsDemo\src\components\ModelObjectsAndMaterials.vue
  * @Description: 地球
 -->
@@ -20,8 +20,8 @@ import { addStats, addAxesHelper, addPointLight, addOrbitControls, addDirectiona
 const stats = new Stats();
 const width = window.innerWidth;
 const height = window.innerHeight;
-const earthPath = new URL("../assets/earth.jpeg", import.meta.url).href;
-const moonPath = new URL("../assets/moon.jpg", import.meta.url).href;
+const earthPath = new URL("../assets/images/earth.jpeg", import.meta.url).href;
+const moonPath = new URL("../assets/images/moon.jpg", import.meta.url).href;
 
 export default {
   name: "ModelObjectsAndMaterials",

@@ -1,0 +1,11 @@
+Model Information:
+* title:	Bomber Drone (concept)
+* source:	https://sketchfab.com/3d-models/bomber-drone-concept-be23d5b50f2c49aa93126592d146d539
+* author:	Rzyas (https://sketchfab.com/rzyas)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Bomber Drone (concept)" (https://sketchfab.com/3d-models/bomber-drone-concept-be23d5b50f2c49aa93126592d146d539) by Rzyas (https://sketchfab.com/rzyas) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

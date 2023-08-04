@@ -59,10 +59,16 @@ export function addPointLight(scene, xyz = [200, 200, 200]) {
 
 export function addDirectionalLight(scene) {
   // 平行光
-  const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+  const directionalLight = new THREE.DirectionalLight(0xff0000, 1);
   // 设置光源的方向：通过光源position属性和目标指向对象的position属性计算
   directionalLight.position.set(100, 100, 100);
   // 方向光指向对象网格模型mesh，可以不设置，默认的位置是0,0,0
   //   directionalLight.target = mesh;
   scene.add(directionalLight);
+}
+
+export function addAmbientLight(scene) {
+  //环境光:没有特定方向，整体改变场景的光照明暗
+  const ambient = new THREE.AmbientLight(0xffffff, 0.4);
+  scene.add(ambient);
 }

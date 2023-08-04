@@ -16,6 +16,11 @@ const routes = [
     name: "Earth",
     component: () => import("../components/Earth.vue"),
   },
+  {
+    path: "/GltfLoader",
+    name: "GltfLoader",
+    component: () => import("../components/GltfLoader.vue"),
+  },
 ];
 
 // 创建路由
