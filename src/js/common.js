@@ -1,3 +1,11 @@
+/*
+ * @Author: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
+ * @Date: 2023-08-04 19:49:55
+ * @LastEditors: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
+ * @LastEditTime: 2023-08-05 11:10:03
+ * @FilePath: \ThreeJsDemo\src\js\common.js
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 import * as THREE from "three";
 import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
@@ -59,7 +67,7 @@ export function addPointLight(scene, xyz = [200, 200, 200]) {
 
 export function addDirectionalLight(scene) {
   // 平行光
-  const directionalLight = new THREE.DirectionalLight(0xff0000, 1);
+  const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
   // 设置光源的方向：通过光源position属性和目标指向对象的position属性计算
   directionalLight.position.set(100, 100, 100);
   // 方向光指向对象网格模型mesh，可以不设置，默认的位置是0,0,0

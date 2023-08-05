@@ -8,7 +8,6 @@
 -->
 
 <template>
-  <div id="webgl"></div>
 </template>
 
 <script>
@@ -291,20 +290,3 @@ export default {
   },
 };
 </script>
-<style>
-body {
-  overflow: hidden;
-  margin: 0px;
-}
-</style>
-
-<style scoped>
-.greetings {
-  font-size: 20px;
-  color: red;
-}
-#webgl {
-  margin-top: 20px;
-  margin-left: 100px;
-}
-</style>
