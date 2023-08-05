@@ -1,11 +1,8 @@
 <!--
- * @Author: ZuPerfect 315698477@qq.com
- * @Date: 2023-08-04 14:12:48
- * @LastEditors: ZuPerfect 315698477@qq.com
- * @LastEditTime: 2023-08-04 17:43:00
- * @FilePath: \ThreeJsDemo\src\components\ModelObjectsAndMaterials.vue
- * @Description: 地球
+ * @描 述: 地球
+ * @作 者: 朱鹏飞
 -->
+
 <template>
 </template>
 

@@ -1,12 +1,8 @@
-
 <!--
- * @Author: ZuPerfect 315698477@qq.com
- * @Date: 2023-08-03 16:52:01
- * @LastEditors: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
- * @LastEditTime: 2023-08-05 11:13:31
- * @FilePath: \ThreeJsDemo\src\components\BufferGeometry.vue
- * @Description: 几何体BufferGeometry;
+ * @描 述: 几何体BufferGeometry
+ * @作 者: 朱鹏飞
 -->
+
 <template>
 </template>
 
