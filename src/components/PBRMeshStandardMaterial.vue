@@ -1,5 +1,5 @@
 <!--
- * @描 述: gltf模型加载
+ * @描 述: PBR材质金属度和粗糙度
  * @作 者: 朱鹏飞
 -->
 
@@ -9,28 +9,22 @@
 import { onMounted } from "vue";
 import * as THREE from "three";
 import Stats from "three/addons/libs/stats.module.js";
-import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
-import {
-  addStats,
-  addAxesHelper,
-  addAmbientLight,
-  addPointLight,
-  addOrbitControls,
-  addDirectionalLight,
-} from "../js/common.js";
+import { addStats, addAxesHelper, addPointLight, addOrbitControls } from "../js/common.js";
+
 const cubePath = new URL("../assets/images/", import.meta.url).href;
 
 // 定义一些常量
 const stats = new Stats();
 const width = window.innerWidth;
 const height = window.innerHeight;
-const aircraftPath = new URL("../assets/gltfs/aircraft/scene.gltf", import.meta.url).href;
 
 export default {
-  name: "GltfLoader",
+  name: "PBR",
   setup() {
     // 创建一个三维场景对象
     const scene = new THREE.Scene();
+    // 创建一个球类型几何体
+    const geometry = new THREE.SphereGeometry(50, 80, 80);
 
     // 加载环境贴图
     // 加载周围环境6个方向贴图
@@ -44,25 +38,30 @@ export default {
 
     // CubeTexture表示立方体纹理对象，父类是纹理对象Texture
     textureCube.encoding = THREE.sRGBEncoding;
-
-    /*--------------------gltf模型加载--------------------*/
-    //纹理贴图加载器TextureLoader
-    const loader = new GLTFLoader();
-    loader.load(aircraftPath, function (gltf) {
-      // 递归遍历批量设置环境贴图
-      gltf.scene.traverse(function (obj) {
-        if (obj.isMesh) {
-          //判断是否是网格模型
-          obj.material.envMap = textureCube; //设置环境贴图
-        }
-      });
-      // 返回的场景对象gltf.scene插入到threejs场景中
-      scene.add(gltf.scene);
+    /*--------------------PBR材质---------------------*/
+    const material = new THREE.MeshStandardMaterial({
+      color: 0xffff00,
+      metalness: 1, //金属度属性
+      roughness: 0, //表面粗糙度
+      // envMapIntensity：控制环境贴图对mesh表面影响程度
+      //默认值1, 设置为0.0,相当于没有环境贴图
+      envMapIntensity: 1,
+      envMap: textureCube, //设置pbr材质环境贴图
     });
 
+    // 设置场景背景贴图
+    scene.background = textureCube;
+
+    // 创建一个网格模型
+    const mesh = new THREE.Mesh(geometry, material);
+    // 设置网格模型在三维空间中的位置坐标，默认是坐标原点
+    mesh.position.set(0, 0, 0);
+    // 将这个网格模型添加到场景里面
+    scene.add(mesh);
+
     // 创建一个透视投影的相机对象
-    const camera = new THREE.PerspectiveCamera(10, width / height, 1, 3000);
-    camera.position.set(50, 50, 50);
+    const camera = new THREE.PerspectiveCamera(30, width / height, 1, 3000);
+    camera.position.set(400, 400, 400);
     camera.lookAt(0, 0, 0);
 
     // 创建渲染器对象
@@ -70,20 +69,11 @@ export default {
       // 锯齿模糊
       antialias: true,
     });
-    renderer.outputEncoding = THREE.sRGBEncoding;
     renderer.setSize(width, height);
-    // 设置背景颜色
-    renderer.setClearColor(0x1e1e1e, 1); //设置背景颜色
     renderer.render(scene, camera);
 
     // 添加点光源
     addPointLight(scene);
-    // 添加平行光
-    // addDirectionalLight(scene);
-    // 添加环境光
-    // addAmbientLight(scene);
-    // 辅助观察坐标系
-    // addAxesHelper(scene);
     // 添加交互控制器
     addOrbitControls(scene, camera, renderer);
 
@@ -100,6 +90,9 @@ export default {
     const render = () => {
       stats.update();
       renderer.render(scene, camera);
+      // mesh.rotateY(0.001);
+      // mesh.rotateX(0.001);
+      // mesh.rotateZ(0.001);
       requestAnimationFrame(render);
     };
 

@@ -25,10 +25,10 @@ export function addOrbitControls(scene, camera, renderer) {
   }); //监听鼠标、键盘事件
 }
 
-export function getGui() {
+export function getGui(right = "0px", width = "300px") {
   const gui = new GUI();
-  gui.domElement.style.right = "0px";
-  gui.domElement.style.width = "300px";
+  gui.domElement.style.right = right;
+  gui.domElement.style.width = width;
   return gui;
 }
 

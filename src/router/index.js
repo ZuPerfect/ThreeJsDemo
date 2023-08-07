@@ -21,6 +21,16 @@ const routes = [
     name: "GltfLoader",
     component: () => import("../components/GltfLoader.vue"),
   },
+  {
+    path: "/PBRMeshStandardMaterial",
+    name: "PBRMeshStandardMaterial",
+    component: () => import("../components/PBRMeshStandardMaterial.vue"),
+  },
+  {
+    path: "/PBRMeshPhysicalMaterial",
+    name: "PBRMeshPhysicalMaterial",
+    component: () => import("../components/PBRMeshPhysicalMaterial.vue"),
+  },
 ];
 
 // 创建路由

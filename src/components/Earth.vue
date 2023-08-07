@@ -3,8 +3,7 @@
  * @作 者: 朱鹏飞
 -->
 
-<template>
-</template>
+<template></template>
 
 <script>
 import { onMounted } from "vue";
@@ -18,6 +17,7 @@ const width = window.innerWidth;
 const height = window.innerHeight;
 const earthPath = new URL("../assets/images/earth.jpeg", import.meta.url).href;
 const moonPath = new URL("../assets/images/moon.jpg", import.meta.url).href;
+const yzPath = new URL("../assets/images/", import.meta.url).href;
 
 export default {
   name: "ModelObjectsAndMaterials",
@@ -34,6 +34,17 @@ export default {
     // .load()方法加载图像，返回一个纹理对象Texture
     const eTexture = textLoader.load(earthPath);
     const mTexture = textLoader.load(moonPath);
+    // 加载环境贴图
+    // 加载周围环境6个方向贴图
+    // 上下左右前后6张贴图构成一个立方体空间
+    // 'px.jpg', 'nx.jpg'：x轴正方向、负方向贴图  p:正positive  n:负negative
+    // 'py.jpg', 'ny.jpg'：y轴贴图
+    // 'pz.jpg', 'nz.jpg'：z轴贴图
+    const textureCube = new THREE.CubeTextureLoader()
+      .setPath(yzPath + "/")
+      .load(["yz.png", "yz.png", "yz.png", "yz.png", "yz.png", "yz.png"]);
+
+    scene.background = textureCube;
 
     /*--------------------网格材质---------------------*/
     // 高光材质（受光照的影响）
