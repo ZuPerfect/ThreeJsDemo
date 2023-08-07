@@ -19,7 +19,7 @@ const width = window.innerWidth;
 const height = window.innerHeight;
 
 export default {
-  name: "PBR",
+  name: "PBRMeshStandardMaterial",
   setup() {
     // 创建一个三维场景对象
     const scene = new THREE.Scene();
