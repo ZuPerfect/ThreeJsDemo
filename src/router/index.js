@@ -2,8 +2,8 @@ import { createRouter, createWebHashHistory } from "vue-router";
 
 const routes = [
   {
-    path: "/",
-    name: "HelloWorld",
+    path: "/Primer",
+    name: "Primer",
     component: () => import("../components/Primer.vue"),
   },
   {
@@ -37,6 +37,13 @@ const routes = [
 const router = createRouter({
   history: createWebHashHistory(),
   routes,
+});
+
+// 路由变化了之后刷新页面
+router.afterEach((to, from) => {
+  if (from.name) {
+    location.reload();
+  }
 });
 
 export default router;
