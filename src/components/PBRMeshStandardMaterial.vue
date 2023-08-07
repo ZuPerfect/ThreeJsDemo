@@ -90,9 +90,6 @@ export default {
     const render = () => {
       stats.update();
       renderer.render(scene, camera);
-      // mesh.rotateY(0.001);
-      // mesh.rotateX(0.001);
-      // mesh.rotateZ(0.001);
       requestAnimationFrame(render);
     };
 
