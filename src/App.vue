@@ -26,7 +26,7 @@ export default {
   },
 };
 </script>
-<style scope>
+<style scoped>
 .navi {
   position: absolute;
   margin-top: 60px;
@@ -38,6 +38,18 @@ export default {
 }
 
 .navi .item {
-  margin: 5px;
+  margin: 10px 5px;
+}
+
+.router-link-active {
+  text-decoration: none;
+  color: yellow;
+}
+a {
+  text-decoration: none;
+  color: white;
+}
+a:hover {
+  color: #409eff;
 }
 </style>
