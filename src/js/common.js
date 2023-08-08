@@ -32,7 +32,7 @@ export function getGui(right = "0px", width = "300px") {
   return gui;
 }
 
-export function addPointLight(scene, xyz = [200, 200, 200]) {
+export function addPointLight(scene, xyz = [200, 200, 200], guiFlag = true) {
   const pointLightPosition = { x: 200, y: 200, z: 200 };
   const gui = getGui();
   // 创建一个点光源
@@ -42,24 +42,25 @@ export function addPointLight(scene, xyz = [200, 200, 200]) {
   // 将点光源添加到场景中
   scene.add(pointLight);
 
-  gui
-    .add(pointLightPosition, "x", -200, 200)
-    .name("点光源X轴方向位置")
-    .onChange(v => (pointLight.position.x = v));
-  gui
-    .add(pointLightPosition, "y", -200, 200)
-    .name("点光源Y轴方向位置")
-    .onChange(v => (pointLight.position.y = v));
-  gui
-    .add(pointLightPosition, "z", -200, 200)
-    .name("点光源Z轴方向位置")
-    .onChange(v => (pointLight.position.z = v));
-
   // 创建一个点光源辅助对象，可以辅助用户看到点光源的位置
   const pointLightHelper = new THREE.PointLightHelper(pointLight, 10);
   // 将点光源辅助对象他添加到场景中
   scene.add(pointLightHelper);
-  gui.add(pointLight, "intensity", 0, 2.0).name("光照强度").step(0.01);
+  if (guiFlag) {
+    gui
+      .add(pointLightPosition, "x", -200, 200)
+      .name("点光源X轴方向位置")
+      .onChange(v => (pointLight.position.x = v));
+    gui
+      .add(pointLightPosition, "y", -200, 200)
+      .name("点光源Y轴方向位置")
+      .onChange(v => (pointLight.position.y = v));
+    gui
+      .add(pointLightPosition, "z", -200, 200)
+      .name("点光源Z轴方向位置")
+      .onChange(v => (pointLight.position.z = v));
+    gui.add(pointLight, "intensity", 0, 2.0).name("光照强度").step(0.01);
+  }
 }
 
 export function addDirectionalLight(scene) {

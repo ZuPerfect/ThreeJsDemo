@@ -61,6 +61,26 @@ export const routes = [
     name: "QuadraticBezierCurve",
     component: () => import("../components/QuadraticBezierCurve.vue"),
   },
+  {
+    path: "/TubeGeometry",
+    name: "TubeGeometry",
+    component: () => import("../components/TubeGeometry.vue"),
+  },
+  {
+    path: "/LatheGeometry",
+    name: "LatheGeometry",
+    component: () => import("../components/LatheGeometry.vue"),
+  },
+  {
+    path: "/ShapeGeometry",
+    name: "ShapeGeometry",
+    component: () => import("../components/ShapeGeometry.vue"),
+  },
+  {
+    path: "/ExtrudeGeometry",
+    name: "ExtrudeGeometry",
+    component: () => import("../components/ExtrudeGeometry.vue"),
+  },
 ];
 // 创建路由
 const router = createRouter({
