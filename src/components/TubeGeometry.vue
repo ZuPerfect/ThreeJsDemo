@@ -37,7 +37,7 @@ export default {
     const path = new THREE.CatmullRomCurve3(arr);
 
     // path:路径   40：沿着轨迹细分数  2：管道半径   25：管道截面圆细分数
-    const geometry = new THREE.TubeGeometry(path, 40, 2, 50);
+    const geometry = new THREE.TubeGeometry(path, 500, 2, 50);
     const material = new THREE.MeshBasicMaterial({
       color: 0xffff00,
       side: THREE.DoubleSide,
