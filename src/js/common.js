@@ -62,6 +62,7 @@ export function addPointLight(scene, xyz = [200, 200, 200], guiFlag = true) {
       .onChange(v => (pointLight.position.z = v));
     gui.add(pointLight, "intensity", 0, 2.0).name("光照强度").step(0.01);
   }
+  return pointLight;
 }
 
 export function addDirectionalLight(scene) {
