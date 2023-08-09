@@ -23,7 +23,7 @@ export default {
   setup() {
     // 创建一个三维场景对象
     const scene = new THREE.Scene();
-
+    /*-----------------------拉伸-------------------------*/
     // 一组二维向量表示一个多边形轮廓坐标
     const pointsArr = [
       new THREE.Vector2(-50, -50),
@@ -34,15 +34,44 @@ export default {
     ];
 
     // Shape表示一个平面多边形轮廓,参数是二维向量构成的数组pointsArr
-    const shape = new THREE.Shape(pointsArr);
-    const geometryOpt = {
+    const shape1 = new THREE.Shape(pointsArr);
+    const extrudeSettings1 = {
       depth: 50, // 拉伸长度
       bevelThickness: 5, // 倒角尺寸拉伸方向
       bevelSize: 5, //倒角尺寸:垂直拉伸方向
       bevelSegments: 20, //倒圆角：倒角细分精度，默认3
     };
 
-    const geometry = new THREE.ExtrudeGeometry(shape, geometryOpt);
+    const geometry1 = new THREE.ExtrudeGeometry(shape1, extrudeSettings1);
+
+    function updateGeometry() {
+      // 创建更新后的 ExtrudeGeometry 实例
+      const extrudeGeometry = new THREE.ExtrudeGeometry(shape1, extrudeSettings1);
+      // 更新几何体
+      geometry1.dispose();
+      geometry1.copy(extrudeGeometry);
+      geometry1.computeVertexNormals();
+      geometry1.computeBoundingBox();
+      geometry1.computeBoundingSphere();
+      // 继续使用更新后的几何体...
+    }
+
+    gui
+      .add(extrudeSettings1, "depth", 0, 100)
+      .onChange(v => updateGeometry())
+      .name("拉伸长度");
+    gui
+      .add(extrudeSettings1, "bevelThickness", 0, 100)
+      .onChange(v => updateGeometry())
+      .name("倒角尺寸拉伸方向");
+    gui
+      .add(extrudeSettings1, "bevelSize", 0, 100)
+      .onChange(v => updateGeometry())
+      .name("倒角尺寸:垂直拉伸方向");
+    gui
+      .add(extrudeSettings1, "bevelSegments", 0, 100)
+      .onChange(v => updateGeometry())
+      .name("倒圆角：倒角细分精度，默认3");
 
     const material = new THREE.MeshPhongMaterial({
       color: 0xffff00,
@@ -52,13 +81,35 @@ export default {
       side: THREE.DoubleSide,
     });
 
-    const mesh = new THREE.Mesh(geometry, material);
-    scene.add(mesh);
+    const mesh1 = new THREE.Mesh(geometry1, material);
+    // scene.add(mesh1);
 
-    // gui.add(geometryOpt, "depth", 0, 100).onChange(v => (geometry.parameters.options.depth = v));
-    gui.add(geometryOpt, "bevelThickness", 0, 100).onChange(v => (geometry.parameters.options.bevelThickness = v));
-    gui.add(geometryOpt, "bevelSize", 0, 100).onChange(v => (geometry.parameters.options.bevelSize = v));
-    gui.add(geometryOpt, "bevelSegments", 0, 100).onChange(v => (geometry.parameters.options.bevelSegments = v));
+    /*----------------------------扫描------------------------------*/
+    // 1、扫描轮廓
+    const shape = new THREE.Shape([
+      // 按照特定顺序，依次书写多边形顶点坐标
+      new THREE.Vector2(0, 0), //多边形起点
+      new THREE.Vector2(0, 10),
+      new THREE.Vector2(10, 10),
+      new THREE.Vector2(10, 0),
+    ]);
+
+    // 2、扫描轨迹
+    const curve = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(-10, -50, -50),
+      new THREE.Vector3(10, 0, 0),
+      new THREE.Vector3(8, 50, 50),
+      new THREE.Vector3(-5, 0, 100),
+    ]);
+
+    const extrudeSettings2 = {
+      extrudePath: curve, //扫描轨迹
+      steps: 100, //沿着路径细分精度，越大越光滑
+    };
+    // 3、扫描造型
+    const geometry2 = new THREE.ExtrudeGeometry(shape, extrudeSettings2);
+    const mesh2 = new THREE.Mesh(geometry2, material);
+    scene.add(mesh2);
 
     // 创建一个透视投影的相机对象
     const camera = new THREE.PerspectiveCamera(30, width / height, 1, 3000);

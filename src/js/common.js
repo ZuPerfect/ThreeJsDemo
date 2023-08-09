@@ -34,7 +34,7 @@ export function getGui(right = "0px", width = "300px") {
 
 export function addPointLight(scene, xyz = [200, 200, 200], guiFlag = true) {
   const pointLightPosition = { x: 200, y: 200, z: 200 };
-  const gui = getGui();
+
   // 创建一个点光源
   const pointLight = new THREE.PointLight(0xffffff, 1);
   // 设置点光源的位置
@@ -47,6 +47,7 @@ export function addPointLight(scene, xyz = [200, 200, 200], guiFlag = true) {
   // 将点光源辅助对象他添加到场景中
   scene.add(pointLightHelper);
   if (guiFlag) {
+    const gui = getGui();
     gui
       .add(pointLightPosition, "x", -200, 200)
       .name("点光源X轴方向位置")
