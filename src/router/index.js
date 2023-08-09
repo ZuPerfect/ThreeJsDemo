@@ -86,6 +86,11 @@ export const routes = [
     name: "EdgesGeometry",
     component: () => import("../components/EdgesGeometry.vue"),
   },
+  {
+    path: "/LightAndShadow",
+    name: "LightAndShadow",
+    component: () => import("../components/LightAndShadow.vue"),
+  },
 ];
 // 创建路由
 const router = createRouter({
