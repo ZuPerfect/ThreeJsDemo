@@ -54,6 +54,8 @@ export default {
     directionalLight.shadow.camera.bottom = -200;
     directionalLight.shadow.camera.near = 0.5;
     directionalLight.shadow.camera.far = 2000;
+    directionalLight.shadow.mapSize.set(1024, 1024);
+    directionalLight.shadow.radius = 10;
     scene.add(directionalLight);
 
     // 坐标格辅助对象. 坐标格实际上是2维线数组.
