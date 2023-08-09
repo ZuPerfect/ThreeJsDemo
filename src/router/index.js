@@ -81,6 +81,11 @@ export const routes = [
     name: "ExtrudeGeometry",
     component: () => import("../components/ExtrudeGeometry.vue"),
   },
+  {
+    path: "/EdgesGeometry",
+    name: "EdgesGeometry",
+    component: () => import("../components/EdgesGeometry.vue"),
+  },
 ];
 // 创建路由
 const router = createRouter({

@@ -54,6 +54,14 @@ export default {
         if (obj.isMesh) {
           //判断是否是网格模型
           obj.material.envMap = textureCube; //设置环境贴图
+
+          /*-------------模型边界线------------*/
+          const edges = new THREE.EdgesGeometry(obj.geometry);
+          const edgesMaterial = new THREE.LineBasicMaterial({
+            color: 0x00ffff,
+          });
+          const line = new THREE.LineSegments(edges, edgesMaterial);
+          obj.add(line);
         }
       });
       // 返回的场景对象gltf.scene插入到threejs场景中
