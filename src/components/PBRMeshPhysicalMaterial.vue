@@ -9,9 +9,18 @@
 import { onMounted } from "vue";
 import * as THREE from "three";
 import Stats from "three/addons/libs/stats.module.js";
-import { addStats, addAxesHelper, addAmbientLight, getGui, addPointLight, addOrbitControls } from "../js/common.js";
+import {
+  addStats,
+  addAxesHelper,
+  addAmbientLight,
+  getGui,
+  addPointLight,
+  addOrbitControls,
+} from "../js/common.js";
 
-const cubePath = new URL("../assets/images/", import.meta.url).href;
+let cubePath = new URL("../assets/images/", import.meta.url).href;
+// cubePath = new URL("../assets/images/room", import.meta.url).href;
+// cubePath = new URL("../assets/images/cube", import.meta.url).href;
 
 // 定义一些常量
 const stats = new Stats();
@@ -26,7 +35,7 @@ export default {
     const scene = new THREE.Scene();
     // 创建一个球类型几何体
     const geometry = new THREE.SphereGeometry(50, 80, 80);
-    const boxGeometry = new THREE.BoxGeometry(50, 50, 50);
+    const boxGeometry = new THREE.BoxGeometry(100, 100, 100);
 
     // 加载环境贴图
     // 加载周围环境6个方向贴图
@@ -37,6 +46,7 @@ export default {
     const textureCube = new THREE.CubeTextureLoader()
       .setPath(cubePath + "/")
       .load(["px.jpg", "nx.jpg", "py.jpg", "ny.jpg", "pz.jpg", "nz.jpg"]);
+      // .load(["1.jpeg", "1.jpeg", "1.jpeg", "1.jpeg", "1.jpeg", "1.jpeg"]);
 
     // CubeTexture表示立方体纹理对象，父类是纹理对象Texture
     textureCube.encoding = THREE.sRGBEncoding;
@@ -62,24 +72,30 @@ export default {
     const boxMesh = new THREE.Mesh(boxGeometry, material);
     // 设置网格模型在三维空间中的位置坐标，默认是坐标原点
     mesh.position.set(0, 0, 0);
-    boxMesh.position.set(100, 0, 100);
+    boxMesh.position.set(200, 0, 200);
     // 将这个网格模型添加到场景里面
     scene.add(mesh);
     scene.add(boxMesh);
 
     gui.add(mesh.material, "metalness", 0, 1).name("金属度属性");
     gui.add(mesh.material, "roughness", 0, 1).name("表面粗糙度");
-    gui.add(mesh.material, "clearcoat", 0, 1).name("控制环境贴图对mesh表面影响程度");
-    gui.add(mesh.material, "clearcoatRoughness", 0, 1).name("透明涂层表面的粗糙度");
-    gui.add(mesh.material, "envMapIntensity", 0, 10).name("物体表面清漆层或者说透明涂层的厚度");
+    gui
+      .add(mesh.material, "clearcoat", 0, 1)
+      .name("控制环境贴图对mesh表面影响程度");
+    gui
+      .add(mesh.material, "clearcoatRoughness", 0, 1)
+      .name("透明涂层表面的粗糙度");
+    gui
+      .add(mesh.material, "envMapIntensity", 0, 10)
+      .name("物体表面清漆层或者说透明涂层的厚度");
     gui.add(mesh.material, "transmission", 0, 1).name("玻璃材质透光率");
     gui.add(mesh.material, "ior", 1, 2.333).name("折射率");
 
     // 创建一个透视投影的相机对象
     const camera = new THREE.PerspectiveCamera(30, width / height, 1, 3000);
-    camera.position.set(400, 400, 400);
-    camera.lookAt(0, 0, 0);
-
+    camera.position.set(275.5024045233229, 36.48115496494779,  -486.96858194136166);
+    camera.lookAt(69.99994968782325, 0.021717144083919115, 23.830764207199543);
+    
     // 创建渲染器对象
     const renderer = new THREE.WebGLRenderer({
       // 锯齿模糊
