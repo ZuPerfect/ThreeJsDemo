@@ -10,18 +10,11 @@
 </template>
 <script>
 import { reactive } from "vue";
+import { routes } from "./router/index";
 export default {
   name: "mainApp",
   setup() {
-    const menuList = reactive([
-      "Primer",
-      "BufferGeometry",
-      "Earth",
-      "GltfLoader",
-      "PBRMeshStandardMaterial",
-      "PBRMeshPhysicalMaterial",
-    ]);
-
+    const menuList = reactive(routes.map(r => r.name));
     return { menuList };
   },
 };
