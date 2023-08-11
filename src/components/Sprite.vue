@@ -52,9 +52,7 @@ export default {
     const geometry = new THREE.BoxGeometry(1, 1, 1);
     const texture = new THREE.TextureLoader().load(locatePath);
     const spriteMaterial = new THREE.SpriteMaterial({
-      // color: 0x00ffff,
       map: texture,
-      // rotation: Math.PI / 4, //旋转精灵对象45度，弧度值
     });
     const waterSpriteMaterial = new THREE.SpriteMaterial({
       color: 0xffffff,
@@ -73,11 +71,9 @@ export default {
     // 精灵模型Sprite默认是一个矩形形状，默认长宽都是1，默认在坐标原点位置
     const sprite = new THREE.Sprite(spriteMaterial);
     sprite.position.set(0, 0.5, 0);
-    // sprite.scale.set(50, 25, 1);
     gui.add(sprite.scale, "x", 0, 100);
     gui.add(sprite.scale, "y", 0, 100);
     mesh.position.set(4, 0.5, 0);
-    mesh.castShadow = true;
     scene.add(mesh);
     scene.add(sprite);
 
