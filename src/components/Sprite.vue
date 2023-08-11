@@ -11,6 +11,7 @@ import * as THREE from "three";
 import Stats from "three/addons/libs/stats.module.js";
 import { addStats, addAxesHelper, addOrbitControls, getGui } from "../js/common.js";
 const locatePath = new URL("../assets/images/locate.png", import.meta.url).href;
+const snowPath = new URL("../assets/images/snow.png", import.meta.url).href;
 
 // 定义一些常量
 const stats = new Stats();
@@ -55,7 +56,8 @@ export default {
       map: texture,
     });
     const waterSpriteMaterial = new THREE.SpriteMaterial({
-      color: 0xffffff,
+      // color: 0xffffff,
+      map: new THREE.TextureLoader().load(snowPath),
     });
 
     gui.add(spriteMaterial, "rotation", 0, 10);
@@ -82,7 +84,7 @@ export default {
       // 精灵模型共享材质
       const sprite = new THREE.Sprite(waterSpriteMaterial);
       group.add(sprite);
-      sprite.scale.set(0.2, 0.2, 0.2);
+      // sprite.scale.set(0.2, 0.2, 0.2);
       // 设置精灵模型位置，在长方体空间上上随机分布
       const x = 500 * (Math.random() - 0.5);
       const y = 300 * Math.random();
