@@ -91,6 +91,11 @@ export const routes = [
     name: "LightAndShadow",
     component: () => import("../components/LightAndShadow.vue"),
   },
+  {
+    path: "/Sprite",
+    name: "Sprite",
+    component: () => import("../components/Sprite.vue"),
+  },
 ];
 // 创建路由
 const router = createRouter({
