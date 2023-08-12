@@ -9,7 +9,12 @@
 import { onMounted } from "vue";
 import * as THREE from "three";
 import Stats from "three/addons/libs/stats.module.js";
-import { addStats, addAxesHelper, addOrbitControls, getGui } from "../js/common.js";
+import {
+  addStats,
+  addAxesHelper,
+  addOrbitControls,
+  getGui,
+} from "../js/common.js";
 const locatePath = new URL("../assets/images/locate.png", import.meta.url).href;
 const snowPath = new URL("../assets/images/snow.png", import.meta.url).href;
 
@@ -26,7 +31,11 @@ export default {
     const scene = new THREE.Scene();
     // 创建一个透视投影的相机对象
     const camera = new THREE.PerspectiveCamera(30, width / height, 1, 3000);
-    camera.position.set(0.474087028275489, 1.8052817252397322, 13.755491629459673);
+    camera.position.set(
+      0.474087028275489,
+      1.8052817252397322,
+      13.755491629459673
+    );
     camera.lookAt(0.8684413580923376, 3.617825388108112, -0.26446450930015014);
     // 创建渲染器对象
     const renderer = new THREE.WebGLRenderer({
@@ -80,32 +89,19 @@ export default {
     scene.add(sprite);
 
     const group = new THREE.Group();
-    for (let i = 0; i < 16000; i++) {
+    for (let i = 0; i < 20000; i++) {
       // 精灵模型共享材质
       const sprite = new THREE.Sprite(waterSpriteMaterial);
       group.add(sprite);
-      // sprite.scale.set(0.2, 0.2, 0.2);
+      const scaleVal = Math.random();
+      sprite.scale.set(scaleVal, scaleVal, scaleVal);
       // 设置精灵模型位置，在长方体空间上上随机分布
-      const x = 500 * (Math.random() - 0.5);
-      const y = 300 * Math.random();
-      const z = 500 * (Math.random() - 0.5);
+      const x = 100 * (Math.random() - 0.5);
+      const y = 100 * Math.random();
+      const z = 100 * (Math.random() - 0.5);
       sprite.position.set(x, y, z);
     }
     scene.add(group);
-
-    function loop() {
-      // loop()每次执行都会更新雨滴的位置，进而产生动画效果
-      group.children.forEach(sprite => {
-        // 雨滴的y坐标每次减1
-        sprite.position.y -= 0.2;
-        if (sprite.position.y < 0) {
-          // 如果雨滴落到地面，重置y，从新下落
-          sprite.position.y = 300;
-        }
-      });
-      requestAnimationFrame(loop);
-    }
-    loop();
 
     const init = () => {
       document.body.appendChild(renderer.domElement);
@@ -119,6 +115,17 @@ export default {
 
     const render = () => {
       stats.update();
+      waterSpriteMaterial.rotation += 0.02;
+      group.children.forEach((sprite) => {
+        // 雨滴的y坐标每次减1
+        sprite.position.y -= 0.1;
+
+        if (sprite.position.y < 0) {
+          // 如果雨滴落到地面，重置y，从新下落
+          sprite.position.y = 100;
+        }
+      });
+
       renderer.render(scene, camera);
       requestAnimationFrame(render);
     };
