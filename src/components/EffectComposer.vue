@@ -15,7 +15,10 @@ import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 // 引入OutlinePass通道（可以给指定的某个模型对象添加一个高亮发光描边效果）
 import { OutlinePass } from "three/addons/postprocessing/OutlinePass.js";
-
+// 引入UnrealBloomPass通道
+import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+// 引入GlitchPass通道（GlitchPass通道会产生闪屏效果）
+import { GlitchPass } from "three/addons/postprocessing/GlitchPass.js";
 // 定义一些常量
 const stats = new Stats();
 const width = window.innerWidth;
@@ -44,9 +47,13 @@ export default {
     const renderPass = new RenderPass(scene, camera);
     // 设置renderPass通道
     composer.addPass(renderPass);
-    const v2 = new THREE.Vector2(window.innerWidth, window.innerHeight);
-    const outlinePass = new OutlinePass(v2, scene, camera);
 
+    // 发光描边
+    const outlinePass = new OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera);
+    // Bloom发光通道
+    const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight));
+    // GlitchPass通道会产生闪屏效果
+    const glitchPass = new GlitchPass();
     // 辅助观察坐标系
     // addAxesHelper(scene);
     // 添加交互控制器
@@ -62,6 +69,7 @@ export default {
 
     /*-----------------------------------几何------------------------------------*/
     const geometry = new THREE.BoxGeometry(1, 1, 1);
+    const geometry1 = new THREE.BoxGeometry(1, 1, 1);
     const material = new THREE.MeshPhongMaterial({
       color: 0xffff00,
       shininess: 20, //高光部分的亮度，默认30
@@ -71,9 +79,13 @@ export default {
     });
 
     const mesh = new THREE.Mesh(geometry, material);
+    const mesh1 = new THREE.Mesh(geometry1, material);
+
     // 精灵模型Sprite默认是一个矩形形状，默认长宽都是1，默认在坐标原点位置
-    mesh.position.set(0, 0.5, 0);
+    mesh.position.set(-2, 0.5, 0);
+    mesh1.position.set(2, 0.5, 0);
     scene.add(mesh);
+    scene.add(mesh1);
 
     // three.js场景中有多个模型的话，你希望给哪个模型对象设置发光描边效果，就可以通过OutlinePass的选择对象属性.selectedObjects设置。
     outlinePass.selectedObjects = [mesh];
@@ -86,6 +98,12 @@ export default {
     // 模型闪烁频率控制，默认0不闪烁
     outlinePass.pulsePeriod = 2;
     composer.addPass(outlinePass);
+    // bloom发光强度
+    bloomPass.strength = 1.0;
+    composer.addPass(bloomPass);
+
+    // 设置glitchPass通道
+    composer.addPass(glitchPass);
 
     const init = () => {
       document.body.appendChild(renderer.domElement);
