@@ -28,6 +28,9 @@ npm run build
 ![示例图片](./public/review/GltfLoader.png)
 ![示例图片](./public/review/PBR1.png)
 ![示例图片](./public/review/PBR2.png)
+![示例图片](./public/review/snow.png)
+![示例图片](./public/review/shader.png)
+![示例图片](./public/review/cude.png)
 
 ### 遗留
 
