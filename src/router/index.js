@@ -96,6 +96,11 @@ export const routes = [
     name: "Sprite",
     component: () => import("../components/Sprite.vue"),
   },
+  {
+    path: "/EffectComposer",
+    name: "EffectComposer",
+    component: () => import("../components/EffectComposer.vue"),
+  },
 ];
 // 创建路由
 const router = createRouter({
