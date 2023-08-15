@@ -37,6 +37,7 @@ export default {
   border-radius: 0px 10px 10px 0px;
   padding: 10px;
   overflow-y: auto;
+  z-index: 1000;
 }
 
 .navi .item {

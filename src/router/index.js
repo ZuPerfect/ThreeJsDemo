@@ -106,6 +106,11 @@ export const routes = [
     name: "Raycaster",
     component: () => import("../components/Raycaster.vue"),
   },
+  {
+    path: "/CSS2DRenderer",
+    name: "CSS2DRenderer",
+    component: () => import("../components/CSS2DRenderer.vue"),
+  },
 ];
 // 创建路由
 const router = createRouter({
