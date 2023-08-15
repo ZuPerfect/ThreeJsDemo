@@ -64,7 +64,7 @@ export default {
     const css2DRenderer = new CSS2DRenderer();
     // css2DRenderer.render(scene, camera);
     css2DRenderer.setSize(width, height);
-    addOrbitControls(scene, camera, css2DRenderer);
+    // addOrbitControls(scene, camera, css2DRenderer);
 
     /*----------------------------添加平行光源----------------------------*/
     const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
@@ -90,6 +90,8 @@ export default {
       scene.add(tag1, tag2);
       css2DRenderer.domElement.style.position = "absolute";
       css2DRenderer.domElement.style.top = "0px";
+      // 设置.style.pointerEvents = none，就可以解决HTML元素标签对threejs canvas画布鼠标事件的遮挡
+      css2DRenderer.domElement.style.pointerEvents = "none";
       document.body.appendChild(css2DRenderer.domElement);
     };
 
@@ -100,8 +102,11 @@ export default {
       addStats(stats);
       // 窗口大小变化的时候更新场景
       window.onresize = function () {
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        camera.aspect = window.innerWidth / window.innerHeight;
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        renderer.setSize(width, height);
+
+        camera.aspect = width / height;
         camera.updateProjectionMatrix();
       };
     };
