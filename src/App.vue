@@ -20,6 +20,14 @@ export default {
 };
 </script>
 <style scoped>
+::-webkit-scrollbar {
+  width: 5px;
+  border-radius: 10px;
+}
+/* 自定义滚动条滑块的形状 */
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+}
 .navi {
   position: absolute;
   margin-top: 60px;
@@ -28,6 +36,7 @@ export default {
   background-color: rgba(0, 0, 0, 0.5);
   border-radius: 0px 10px 10px 0px;
   padding: 10px;
+  overflow-y: auto;
 }
 
 .navi .item {
