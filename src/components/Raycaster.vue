@@ -53,7 +53,8 @@ export default {
       // 锯齿模糊
       antialias: true,
     });
-
+    // 设置像素比
+    renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(width, height);
     renderer.render(scene, camera);
     // 创建后处理对象EffectComposer，WebGL渲染器作为参数
@@ -96,8 +97,8 @@ export default {
     renderer.domElement.addEventListener("pointermove", function (event) {
       const px = event.offsetX;
       const py = event.offsetY;
-      const x = (px / width) * 2 - 1;
-      const y = -(py / height) * 2 + 1;
+      const x = (px / window.innerWidth) * 2 - 1;
+      const y = -(py / window.innerHeight) * 2 + 1;
       const raycaster = new THREE.Raycaster();
       raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
       const intersects = raycaster.intersectObjects([mesh, mesh1]);
