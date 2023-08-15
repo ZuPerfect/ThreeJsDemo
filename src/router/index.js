@@ -101,6 +101,11 @@ export const routes = [
     name: "EffectComposer",
     component: () => import("../components/EffectComposer.vue"),
   },
+  {
+    path: "/Raycaster",
+    name: "Raycaster",
+    component: () => import("../components/Raycaster.vue"),
+  },
 ];
 // 创建路由
 const router = createRouter({
