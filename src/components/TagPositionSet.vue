@@ -1,0 +1,164 @@
+<!--
+ * @描 述: 标签位置不同设置方式
+ * @作 者: 朱鹏飞
+-->
+
+<template>
+  <div id="tag1">这是第一个正方体</div>
+  <div id="tag2">这是第二个正方体</div>
+  <div id="tag3">这是一个圆锥</div>
+</template>
+
+<script>
+import { onMounted } from "vue";
+import * as THREE from "three";
+import Stats from "three/addons/libs/stats.module.js";
+import { addStats, addOrbitControls } from "../js/common.js";
+// 引入CSS2渲染器CSS2DRenderer和CSS2模型对象CSS2DObject
+import { CSS2DRenderer, CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
+
+// 定义一些常量
+const stats = new Stats();
+const width = window.innerWidth;
+const height = window.innerHeight;
+// 创建一个三维场景对象
+const scene = new THREE.Scene();
+
+// 往场景中添加一个mesh
+const getMesh = (position = [0, 0, 0]) => {
+  const geometry = new THREE.BoxGeometry(1, 1, 1);
+  const material = new THREE.MeshPhongMaterial({
+    color: 0xffff00,
+    shininess: 20, //高光部分的亮度，默认30
+    specular: 0x444444, //高光部分的颜色
+    // wireframe: true,
+    // side: THREE.DoubleSide,
+  });
+
+  const mesh = new THREE.Mesh(geometry, material);
+  mesh.position.set(...position);
+  // scene.add(mesh);
+  return mesh;
+};
+
+export default {
+  name: "CSS2DRenderer",
+  setup() {
+    // 创建一个透视投影的相机对象
+    const camera = new THREE.PerspectiveCamera(30, width / height, 1, 3000);
+    camera.position.set(-6.892031979223322, 4.2769926569586545, 11.265193278221345);
+    camera.lookAt(0, 0, 0);
+
+    /*---------------------------创建webgl渲染器对象--------------------------*/
+    // 创建webgl渲染器对象
+    const renderer = new THREE.WebGLRenderer({
+      // 锯齿模糊
+      antialias: true,
+    });
+    // 设置像素比
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(width, height);
+    // 添加交互控制器
+    addOrbitControls(scene, camera, renderer);
+
+    /*----------------------------创建css2d渲染器对象----------------------------*/
+    const css2DRenderer = new CSS2DRenderer();
+    css2DRenderer.setSize(width, height);
+
+    /*----------------------------添加平行光源----------------------------*/
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    directionalLight.position.set(20, 50, 50);
+    scene.add(directionalLight);
+
+    /*--------------------------添加坐标格辅助对象-------------------------*/
+    // 坐标格辅助对象. 坐标格实际上是2维线数组.
+    const grid = new THREE.GridHelper(40, 100, 0xc1c1c1, 0x8d8d8d);
+    scene.add(grid);
+
+    /*----------------------------带HTML标签的Mesh----------------------------*/
+    const addMeshWithTag = () => {
+      // const group1 = new THREE.Group();
+      // const group2 = new THREE.Group();
+      // CSS2模型标签对象位置和要标注的Mesh放在同一个位置，这样HTML标签就可以标注Mesh。
+      const mesh1 = getMesh([-2, 0.5, 0]);
+      const mesh2 = getMesh([2, 0.5, 0]);
+      const tag1 = new CSS2DObject(document.getElementById("tag1"));
+      const tag2 = new CSS2DObject(document.getElementById("tag2"));
+
+      // tag1.position.set(-2, 1.3, 0);
+      // tag2.position.set(2, 1.3, 0);
+
+      // group1.add(mesh1, tag1);
+      // group1.position.set(-4, 0, 0);
+      // group2.add(mesh2, tag2);
+      // scene.add(group1, group2);
+      mesh1.add(tag1);
+      const pos = mesh1.geometry.attributes.position;
+      tag1.position.set(pos.getX(0), pos.getY(0), pos.getZ(0));
+      mesh2.add(tag2);
+      scene.add(mesh1, mesh2);
+
+      css2DRenderer.domElement.style.position = "absolute";
+      css2DRenderer.domElement.style.top = "0px";
+      // 设置.style.pointerEvents = none，就可以解决HTML元素标签对threejs canvas画布鼠标事件的遮挡
+      css2DRenderer.domElement.style.pointerEvents = "none";
+      document.body.appendChild(css2DRenderer.domElement);
+    };
+
+    const addCone = () => {
+      const geometry = new THREE.ConeGeometry(2, 6, 100);
+      const material = new THREE.MeshPhongMaterial({
+        color: 0xffff00,
+        shininess: 20, //高光部分的亮度，默认30
+        specular: 0x444444, //高光部分的颜色
+        // wireframe: true,
+        // side: THREE.DoubleSide,
+      });
+      const div = document.getElementById("tag3");
+      const tag = new CSS2DObject(div);
+      tag.position.y += 3;
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.add(tag);
+      mesh.add(new THREE.AxesHelper(10));
+      scene.add(mesh);
+    };
+
+    const init = () => {
+      addMeshWithTag();
+      addCone();
+      document.body.appendChild(renderer.domElement);
+      // 添加性能监控
+      addStats(stats);
+      // 窗口大小变化的时候更新场景
+      window.onresize = function () {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        renderer.setSize(width, height);
+        css2DRenderer.setSize(width, height);
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+      };
+    };
+
+    const render = () => {
+      stats.update();
+      renderer.render(scene, camera); // 如果加了渲染通道，直接调用composer.render()即可
+      css2DRenderer.render(scene, camera);
+      requestAnimationFrame(render);
+    };
+
+    onMounted(() => {
+      init();
+      render();
+    });
+
+    return {};
+  },
+};
+</script>
+<style>
+#tag1 {
+  color: red;
+  background-color: white;
+}
+</style>

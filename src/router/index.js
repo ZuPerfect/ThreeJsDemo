@@ -111,6 +111,11 @@ export const routes = [
     name: "CSS2DRenderer",
     component: () => import("../components/CSS2DRenderer.vue"),
   },
+  {
+    path: "/TagPositionSet",
+    name: "TagPositionSet",
+    component: () => import("../components/TagPositionSet.vue"),
+  },
 ];
 // 创建路由
 const router = createRouter({
