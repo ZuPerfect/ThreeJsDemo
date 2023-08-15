@@ -105,7 +105,7 @@ export default {
         const width = window.innerWidth;
         const height = window.innerHeight;
         renderer.setSize(width, height);
-
+        css2DRenderer.setSize(width, height);
         camera.aspect = width / height;
         camera.updateProjectionMatrix();
       };
