@@ -19,6 +19,7 @@ import { OutlinePass } from "three/addons/postprocessing/OutlinePass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 // 引入GlitchPass通道（GlitchPass通道会产生闪屏效果）
 import { GlitchPass } from "three/addons/postprocessing/GlitchPass.js";
+
 // 定义一些常量
 const stats = new Stats();
 const width = window.innerWidth;
