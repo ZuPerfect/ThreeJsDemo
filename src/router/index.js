@@ -116,6 +116,11 @@ export const routes = [
     name: "TagPositionSet",
     component: () => import("../components/TagPositionSet.vue"),
   },
+  {
+    path: "/TagGltf",
+    name: "TagGltf",
+    component: () => import("../components/TagGltf.vue"),
+  },
 ];
 // 创建路由
 const router = createRouter({
