@@ -31,6 +31,8 @@ npm run build
 ![示例图片](./public/review/snow.png)
 ![示例图片](./public/review/shader.png)
 ![示例图片](./public/review/cube.png)
+![示例图片](./public/review/effect.png)
+![示例图片](./public/review/tagGltf.png)
 
 ### 遗留
 
