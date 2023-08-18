@@ -3,10 +3,18 @@
  * @作 者: 朱鹏飞
 -->
 
-<template></template>
+<template>
+  <div class="btns">
+    <div class="btn" @click="stopAnimate">停止</div>
+    <div class="btn" @click="playAnimate">播放</div>
+    <div class="btn" id="paused" @click="pauseAnimate">{{ pausedText }}</div>
+    <div class="btn" @click="timeScale(2)">2倍速</div>
+    <div class="btn" @click="timeScale(1)">1倍速</div>
+  </div>
+</template>
 
 <script>
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import * as THREE from "three";
 import Stats from "three/addons/libs/stats.module.js";
 import { addStats, addOrbitControls } from "../js/common.js";
@@ -82,7 +90,12 @@ export default {
     const mixer = new THREE.AnimationMixer(mesh);
     // 执行播放器AnimationMixer的.clipAction()方法返回一个AnimationAction对象,AnimationAction对象用来控制如何播放，比如.play()方法。
     const clipAction = mixer.clipAction(clip);
+    // .play()控制动画播放，默认循环播放
     clipAction.play();
+    // 不循环播放
+    // clipAction.loop = THREE.LoopOnce;
+    // 物体状态停留在动画结束的时候
+    clipAction.clampWhenFinished = true;
 
     const init = () => {
       document.body.appendChild(renderer.domElement);
@@ -112,8 +125,45 @@ export default {
       render();
     });
 
-    return {};
+    const stopAnimate = () => {
+      clipAction.stop();
+    };
+
+    const playAnimate = () => {
+      clipAction.play();
+    };
+
+    const pausedText = ref("暂停");
+    const pauseAnimate = () => {
+      if (clipAction.paused) {
+        clipAction.paused = false;
+        pausedText.value = "暂停";
+      } else {
+        clipAction.paused = true;
+        pausedText.value = "继续";
+      }
+    };
+
+    const timeScale = v => {
+      clipAction.timeScale = v;
+    };
+
+    return { stopAnimate, playAnimate, pauseAnimate, timeScale, pausedText };
   },
 };
 </script>
-<style></style>
+<style>
+.btns {
+  display: flex;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+}
+.btn {
+  cursor: pointer;
+  background-color: bisque;
+  padding: 5px 20px;
+  margin: 5px;
+}
+</style>
