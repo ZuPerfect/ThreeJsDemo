@@ -131,6 +131,11 @@ export const routes = [
     name: "AnimationClip",
     component: () => import("../components/AnimationClip.vue"),
   },
+  {
+    path: "/GltfAnimation",
+    name: "GltfAnimation",
+    component: () => import("../components/GltfAnimation.vue"),
+  },
 ];
 // 创建路由
 const router = createRouter({
