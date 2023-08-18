@@ -121,6 +121,11 @@ export const routes = [
     name: "TagGltf",
     component: () => import("../components/TagGltf.vue"),
   },
+  {
+    path: "/CSS3DRenderer",
+    name: "CSS3DRenderer",
+    component: () => import("../components/CSS3DRenderer.vue"),
+  },
 ];
 // 创建路由
 const router = createRouter({
