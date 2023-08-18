@@ -17,7 +17,8 @@
 import { onMounted, ref } from "vue";
 import * as THREE from "three";
 import Stats from "three/addons/libs/stats.module.js";
-import { addStats, addOrbitControls } from "../js/common.js";
+import { addStats, addOrbitControls, getGui } from "../js/common.js";
+const gui = getGui();
 
 // 定义一些常量
 const stats = new Stats();
@@ -96,6 +97,7 @@ export default {
     // clipAction.loop = THREE.LoopOnce;
     // 物体状态停留在动画结束的时候
     clipAction.clampWhenFinished = true;
+    gui.add(clipAction, "time", 0, 6);
 
     const init = () => {
       document.body.appendChild(renderer.domElement);
@@ -157,7 +159,7 @@ export default {
   display: flex;
   position: absolute;
   top: 10px;
-  right: 10px;
+  right: 500px;
   z-index: 2;
 }
 .btn {
