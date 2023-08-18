@@ -126,6 +126,11 @@ export const routes = [
     name: "CSS3DRenderer",
     component: () => import("../components/CSS3DRenderer.vue"),
   },
+  {
+    path: "/AnimationClip",
+    name: "AnimationClip",
+    component: () => import("../components/AnimationClip.vue"),
+  },
 ];
 // 创建路由
 const router = createRouter({
