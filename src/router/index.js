@@ -135,7 +135,11 @@ export const routes = [
     path: "/GltfAnimation",
     name: "GltfAnimation",
     component: () => import("../components/GltfAnimation.vue"),
-  },
+  },{
+    path: "/MorphAnimation",
+    name: "MorphAnimation",
+    component: () => import("../components/MorphAnimation.vue"),
+  }
 ];
 // 创建路由
 const router = createRouter({
