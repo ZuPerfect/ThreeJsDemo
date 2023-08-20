@@ -27,23 +27,6 @@ const height = window.innerHeight;
 // 创建一个三维场景对象
 const scene = new THREE.Scene();
 
-// 往场景中添加一个mesh
-const addMesh = (position = [0, 0, 0]) => {
-  const geometry = new THREE.BoxGeometry(50, 50, 50);
-  const material = new THREE.MeshPhongMaterial({
-    color: 0xffff00,
-    shininess: 20, //高光部分的亮度，默认30
-    specular: 0x444444, //高光部分的颜色
-    // wireframe: true,
-    // side: THREE.DoubleSide,
-  });
-
-  const mesh = new THREE.Mesh(geometry, material);
-  mesh.position.set(...position);
-  scene.add(mesh);
-  return mesh;
-};
-
 export default {
   name: "MorphAnimation",
   setup() {
@@ -85,22 +68,27 @@ export default {
 
     /*-----------------------------------几何------------------------------------*/
     const geometry = new THREE.BoxGeometry(50, 50, 50);
-    /*-----------------------------------动画------------------------------------*/
-    const mesh = addMesh([0, 25, 0]);
+    const target1 = new THREE.BoxGeometry(50, 200, 50).attributes.position;
+    const target2 = new THREE.BoxGeometry(10, 50, 0).attributes.position;
+    geometry.morphAttributes.position = [target1, target2];
+    const mesh = new THREE.Mesh(geometry, material);
+    scene.add(mesh);
+    mesh.morphTargetInfluences[0] = 0.0;
+    mesh.morphTargetInfluences[1] = 1.0;
+    /*-----------------------------------生成形变动画------------------------------------*/
     mesh.name = "Box";
-    const times = [0, 2, 4, 6]; // 时间轴上，设置三个时刻0、3、6秒
-    // time中三个不同时间点，物体分别对应values中的三个xyz坐标
-    const values = [0, 25, 0, 100, 25, 0, 0, 25, 100, 0, 25, 0];
-    // 0~3秒，物体从(0,0,0)逐渐移动到(100,0,0)，3~6秒逐渐从(100,0,0)移动到(0,0,100)
-    const positionKF = new THREE.KeyframeTrack("Box.position", times, values);
-    // 从2秒到5秒，物体从黄色逐渐变成蓝色
-    const colorKF = new THREE.KeyframeTrack(
-      "Box.material.color",
-      [0, 3, 6],
-      [1, 1, 0, 0, 1, 0, 0, 0, 1]
+    const KF1 = new THREE.KeyframeTrack(
+      "Box.morphTargetInfluences[0]",
+      [0, 5],
+      [0, 1]
+    );
+    const KF2 = new THREE.KeyframeTrack(
+      "Box.morphTargetInfluences[1]",
+      [5, 10],
+      [0, 1]
     );
     // 基于关键帧数据，创建一个clip关键帧动画对象，命名"test"，持续时间6秒
-    const clip = new THREE.AnimationClip("test", 6, [positionKF, colorKF]);
+    const clip = new THREE.AnimationClip("test", 10, [KF1, KF2]);
     // 创建一个动画播放器
     // 包含关键帧动画的模型对象作为AnimationMixer的参数创建一个播放器mixer
     const mixer = new THREE.AnimationMixer(mesh);
@@ -112,7 +100,7 @@ export default {
     // clipAction.loop = THREE.LoopOnce;
     // 物体状态停留在动画结束的时候
     clipAction.clampWhenFinished = true;
-    gui.add(clipAction, "time", 0, 6);
+    gui.add(clipAction, "time", 0, 10);
 
     const init = () => {
       document.body.appendChild(renderer.domElement);
