@@ -10,21 +10,35 @@ import { onMounted } from "vue";
 import * as THREE from "three";
 import Stats from "three/addons/libs/stats.module.js";
 import { OBJLoader } from "three/addons/loaders/OBJLoader";
-import { addStats, addOrbitControls, addAxesHelper, addDirectionalLight } from "../js/common.js";
+import {
+  addStats,
+  addOrbitControls,
+  addAxesHelper,
+  addDirectionalLight,
+} from "../js/common.js";
 import { DragControls } from "three/addons/controls/DragControls.js";
-import { CSS2DRenderer, CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
+import {
+  CSS2DRenderer,
+  CSS2DObject,
+} from "three/addons/renderers/CSS2DRenderer.js";
 
 // 定义一些常量
 const stats = new Stats();
 const width = window.innerWidth;
 const height = window.innerHeight;
-const obj1Path = new URL("../assets/objs/small cabinet for program v2.obj", import.meta.url).href;
-const obj2Path = new URL("../assets/objs/wide wide cabinet for program v2.obj", import.meta.url).href;
+const obj1Path = new URL(
+  "../assets/objs/small cabinet for program v2.obj",
+  import.meta.url
+).href;
+const obj2Path = new URL(
+  "../assets/objs/wide wide cabinet for program v2.obj",
+  import.meta.url
+).href;
 
-const loaderObj = objPath => {
+const loaderObj = (objPath) => {
   return new Promise((resolve, reject) => {
     const loader = new OBJLoader();
-    loader.load(objPath, obj => {
+    loader.load(objPath, (obj) => {
       resolve(obj);
     });
   });
@@ -52,17 +66,25 @@ export default {
       let dragControls2 = null;
       const obj1Loader = loaderObj(obj1Path);
       const obj2Loader = loaderObj(obj2Path);
-      Promise.all([obj1Loader, obj2Loader]).then(groups => {
+      Promise.all([obj1Loader, obj2Loader]).then((groups) => {
         groups[0].position.y += 330;
-        groups.forEach(group => {
+        groups.forEach((group) => {
           group.rotation.x += -Math.PI / 2;
         });
 
         scene.add(...groups);
 
         // 创建拖动控制器
-        dragControls1 = new DragControls([groups[0]], camera, renderer.domElement);
-        dragControls2 = new DragControls([groups[1]], camera, renderer.domElement);
+        dragControls1 = new DragControls(
+          [groups[0]],
+          camera,
+          renderer.domElement
+        );
+        dragControls2 = new DragControls(
+          [groups[1]],
+          camera,
+          renderer.domElement
+        );
         dragControls1.transformGroup = true;
         dragControls2.transformGroup = true;
 
@@ -81,44 +103,26 @@ export default {
           const group = event.object;
           const snapMesh = groups[1].getObjectByName("bottom paper (1)");
           const center1 = new THREE.Vector3();
-          snapMesh.geometry.computeBoundingBox();
-          snapMesh.geometry.boundingBox.getCenter(center1);
+          const box1 = new THREE.Box3().setFromObject(snapMesh);
+          box1.getCenter(center1);
 
-          const mesh = groups[0].getObjectByName("paper (1)");
+          const mesh = group.getObjectByName("paper (1)");
           const center2 = new THREE.Vector3();
-          mesh.geometry.computeBoundingBox();
-          mesh.geometry.boundingBox.getCenter(center2);
+          const box2 = new THREE.Box3().setFromObject(mesh);
+          box2.getCenter(center2);
 
-          console.log(center1.distanceTo(center2));
+          if (center1.distanceTo(center2) < 200) {
+            const offsetX = center2.x - center1.x;
+            const offsetY = center2.y - center1.y;
+            const offsetZ = center2.z - center1.z;
+            group.position.x -= offsetX;
+            group.position.y -= offsetY;
+            group.position.z -= offsetZ;
+          }
 
-          // group.traverse(obj => {
-          //   if (obj.isMesh) {
-          //     const div = document.createElement("div");
-          //     div.innerHTML = obj.name;
-          //     const tag = new CSS2DObject(div);
-
-          //     // 初始化中心点坐标
-          //     const center = new THREE.Vector3();
-          //     obj.geometry.computeBoundingBox();
-          //     obj.geometry.boundingBox.getCenter(center);
-          //     // 获取包围盒的最小和最大顶点
-          //     // const min = boundingBox.min;
-          //     // const max = boundingBox.max;
-          //     // // 计算高度、宽度和深度
-          //     // const height = Math.abs(max.y - min.y);
-          //     // const width = Math.abs(max.x - min.x);
-          //     // const depth = Math.abs(max.z - min.z);
-
-          //     const box = new THREE.Box3().setFromObject(groups[0].getObjectByName("paper (1)"));
-          //     const boxHelper = new THREE.Box3Helper(box, 0xffff00);
-          //     scene.add(boxHelper);
-
-          //     center.applyMatrix4(obj.matrixWorld);
-          //     tag.position.copy(center);
-
-          //     scene.add(tag);
-          //   }
-          // });
+          // const box3 = new THREE.Box3().setFromObject(group);
+          // const boxHelper = new THREE.Box3Helper(box3, 0xffff00);
+          // scene.add(boxHelper)
         });
 
         // 监听拖动开始事件
