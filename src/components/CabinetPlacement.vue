@@ -53,65 +53,12 @@ export default {
       const obj1Loader = loaderObj(obj1Path);
       const obj2Loader = loaderObj(obj2Path);
       Promise.all([obj1Loader, obj2Loader]).then(groups => {
-        groups[0].traverse(obj => {
-          if (obj.isMesh) {
-            obj.position.y += 330;
-          }
-        });
+        groups[0].position.y += 330;
         groups.forEach(group => {
-          group.traverse(obj => {
-            if (obj.isMesh) {
-              obj.rotation.x += -Math.PI / 2;
-              const div = document.createElement("div");
-              div.innerHTML = obj.name;
-              const tag = new CSS2DObject(div);
-              const geometry = obj.geometry;
-
-              // 获取模型的顶点坐标
-              const vertices = geometry.attributes.position.array;
-
-              obj.updateMatrixWorld(true);
-              // 初始化中心点坐标
-              const center = new THREE.Vector3();
-              obj.geometry.computeBoundingBox();
-              obj.geometry.boundingBox.getCenter(center);
-              center.applyMatrix4(obj.matrixWorld);
-              // // 遍历顶点坐标，累加每个顶点的坐标值
-              // for (let i = 0; i < vertices.length; i += 3) {
-              //   center.x += vertices[i];
-              //   center.y += vertices[i + 1];
-              //   center.z += vertices[i + 2];
-              // }
-
-              // // 求取平均值
-              // const vertexCount = vertices.length / 3;
-              // center.divideScalar(vertexCount);
-              // const center = new THREE.Vector3();
-              // geometry.computeBoundingBox();
-              // geometry.boundingBox.getCenter(center);
-              // geometry.applyMatrix4(obj.matrixWorld);
-              // const box = new THREE.Box3();
-              // box.expandByObject(obj);
-              // 重新计算外包框的最小点和最大点
-              // box.min.applyMatrix4(obj.matrixWorld);
-              // box.max.applyMatrix4(obj.matrixWorld);
-
-              // const boxHelper = new THREE.Box3Helper(box, 0xffff00);
-              // scene.add(boxHelper);
-              // const center = new THREE.Vector3();
-              // box.getCenter(center);
-              // center.applyMatrix4(group.matrixWorld);
-              tag.position.copy(center);
-              scene.add(tag);
-            }
-          });
+          group.rotation.x += -Math.PI / 2;
         });
 
         scene.add(...groups);
-
-        // const box = new THREE.Box3().setFromObject(groups[0].getObjectByName("mdf bottom"));
-        // const boxHelper = new THREE.Box3Helper(box, 0xffff00);
-        // scene.add(boxHelper);
 
         // 创建拖动控制器
         dragControls1 = new DragControls([groups[0]], camera, renderer.domElement);
@@ -132,30 +79,46 @@ export default {
           controls.enabled = true;
           dragControls2.enabled = true;
           const group = event.object;
-          group.traverse(obj => {
-            if (obj.isMesh) {
-              const div = document.createElement("div");
-              div.innerHTML = obj.name;
-              const tag = new CSS2DObject(div);
+          const snapMesh = groups[1].getObjectByName("bottom paper (1)");
+          const center1 = new THREE.Vector3();
+          snapMesh.geometry.computeBoundingBox();
+          snapMesh.geometry.boundingBox.getCenter(center1);
 
-              // 初始化中心点坐标
-              const center = new THREE.Vector3();
-              obj.geometry.computeBoundingBox();
-              obj.geometry.boundingBox.getCenter(center);
-              // 获取包围盒的最小和最大顶点
-              const min = boundingBox.min;
-              const max = boundingBox.max;
-              // 计算高度、宽度和深度
-              const height = Math.abs(max.y - min.y);
-              const width = Math.abs(max.x - min.x);
-              const depth = Math.abs(max.z - min.z);
+          const mesh = groups[0].getObjectByName("paper (1)");
+          const center2 = new THREE.Vector3();
+          mesh.geometry.computeBoundingBox();
+          mesh.geometry.boundingBox.getCenter(center2);
 
-              center.applyMatrix4(obj.matrixWorld);
-              tag.position.copy(center);
+          console.log(center1.distanceTo(center2));
 
-              scene.add(tag);
-            }
-          });
+          // group.traverse(obj => {
+          //   if (obj.isMesh) {
+          //     const div = document.createElement("div");
+          //     div.innerHTML = obj.name;
+          //     const tag = new CSS2DObject(div);
+
+          //     // 初始化中心点坐标
+          //     const center = new THREE.Vector3();
+          //     obj.geometry.computeBoundingBox();
+          //     obj.geometry.boundingBox.getCenter(center);
+          //     // 获取包围盒的最小和最大顶点
+          //     // const min = boundingBox.min;
+          //     // const max = boundingBox.max;
+          //     // // 计算高度、宽度和深度
+          //     // const height = Math.abs(max.y - min.y);
+          //     // const width = Math.abs(max.x - min.x);
+          //     // const depth = Math.abs(max.z - min.z);
+
+          //     const box = new THREE.Box3().setFromObject(groups[0].getObjectByName("paper (1)"));
+          //     const boxHelper = new THREE.Box3Helper(box, 0xffff00);
+          //     scene.add(boxHelper);
+
+          //     center.applyMatrix4(obj.matrixWorld);
+          //     tag.position.copy(center);
+
+          //     scene.add(tag);
+          //   }
+          // });
         });
 
         // 监听拖动开始事件

@@ -20,7 +20,7 @@ export function addAxesHelper(scene) {
 export function addOrbitControls(scene, camera, renderer) {
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.addEventListener("change", function () {
-    console.log(camera, controls);
+    // console.log(camera, controls);
     // 设置了渲染循环,相机控件OrbitControls就不用再通过事件change执行renderer.render(scene, camera);，毕竟渲染循环一直在执行renderer.render(scene, camera);。
     // renderer.render(scene, camera); //执行渲染操作
   }); //监听鼠标、键盘事件

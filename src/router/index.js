@@ -136,6 +136,11 @@ export const routes = [
     name: "GltfAnimation",
     component: () => import("../components/GltfAnimation.vue"),
   },
+  {
+    path: "/CabinetPlacement",
+    name: "CabinetPlacement",
+    component: () => import("../components/CabinetPlacement.vue"),
+  },
 ];
 // 创建路由
 const router = createRouter({
