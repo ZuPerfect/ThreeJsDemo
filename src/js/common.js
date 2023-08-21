@@ -13,7 +13,7 @@ export function addStats(stats) {
 }
 
 export function addAxesHelper(scene) {
-  const axesHelper = new THREE.AxesHelper(100);
+  const axesHelper = new THREE.AxesHelper(1000);
   scene.add(axesHelper);
 }
 
@@ -24,6 +24,7 @@ export function addOrbitControls(scene, camera, renderer) {
     // 设置了渲染循环,相机控件OrbitControls就不用再通过事件change执行renderer.render(scene, camera);，毕竟渲染循环一直在执行renderer.render(scene, camera);。
     // renderer.render(scene, camera); //执行渲染操作
   }); //监听鼠标、键盘事件
+  return controls;
 }
 
 export function getGui(right = "0px", width = "300px") {
@@ -70,7 +71,7 @@ export function addDirectionalLight(scene) {
   // 平行光
   const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
   // 设置光源的方向：通过光源position属性和目标指向对象的position属性计算
-  directionalLight.position.set(100, 100, 100);
+  directionalLight.position.set(5000, 5000, 5000);
   // 方向光指向对象网格模型mesh，可以不设置，默认的位置是0,0,0
   //   directionalLight.target = mesh;
   scene.add(directionalLight);

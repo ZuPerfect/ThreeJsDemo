@@ -83,7 +83,7 @@ export default {
           if (obj.isMesh) {
             obj.material.side = THREE.FrontSide;
             const div = document.createElement("div");
-            div.textContent = obj.name;
+            div.innerHTML = obj.name;
             const tag = new CSS2DObject(div);
             obj.add(tag);
 
