@@ -10,35 +10,21 @@ import { onMounted } from "vue";
 import * as THREE from "three";
 import Stats from "three/addons/libs/stats.module.js";
 import { OBJLoader } from "three/addons/loaders/OBJLoader";
-import {
-  addStats,
-  addOrbitControls,
-  addAxesHelper,
-  addDirectionalLight,
-} from "../js/common.js";
+import { addStats, addOrbitControls, addAxesHelper, addDirectionalLight } from "../js/common.js";
 import { DragControls } from "three/addons/controls/DragControls.js";
-import {
-  CSS2DRenderer,
-  CSS2DObject,
-} from "three/addons/renderers/CSS2DRenderer.js";
+import { CSS2DRenderer, CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
 
 // 定义一些常量
 const stats = new Stats();
 const width = window.innerWidth;
 const height = window.innerHeight;
-const obj1Path = new URL(
-  "../assets/objs/small cabinet for program v2.obj",
-  import.meta.url
-).href;
-const obj2Path = new URL(
-  "../assets/objs/wide wide cabinet for program v2.obj",
-  import.meta.url
-).href;
+const obj1Path = new URL("../assets/objs/small cabinet for program v2.obj", import.meta.url).href;
+const obj2Path = new URL("../assets/objs/wide wide cabinet for program v2.obj", import.meta.url).href;
 
-const loaderObj = (objPath) => {
+const loaderObj = objPath => {
   return new Promise((resolve, reject) => {
     const loader = new OBJLoader();
-    loader.load(objPath, (obj) => {
+    loader.load(objPath, obj => {
       resolve(obj);
     });
   });
@@ -66,25 +52,17 @@ export default {
       let dragControls2 = null;
       const obj1Loader = loaderObj(obj1Path);
       const obj2Loader = loaderObj(obj2Path);
-      Promise.all([obj1Loader, obj2Loader]).then((groups) => {
+      Promise.all([obj1Loader, obj2Loader]).then(groups => {
         groups[0].position.y += 330;
-        groups.forEach((group) => {
+        groups.forEach(group => {
           group.rotation.x += -Math.PI / 2;
         });
 
         scene.add(...groups);
 
         // 创建拖动控制器
-        dragControls1 = new DragControls(
-          [groups[0]],
-          camera,
-          renderer.domElement
-        );
-        dragControls2 = new DragControls(
-          [groups[1]],
-          camera,
-          renderer.domElement
-        );
+        dragControls1 = new DragControls([groups[0]], camera, renderer.domElement);
+        dragControls2 = new DragControls([groups[1]], camera, renderer.domElement);
         dragControls1.transformGroup = true;
         dragControls2.transformGroup = true;
 
@@ -104,6 +82,25 @@ export default {
           const snapMesh = groups[1].getObjectByName("bottom paper (1)");
           const center1 = new THREE.Vector3();
           const box1 = new THREE.Box3().setFromObject(snapMesh);
+          const min = box1.min;
+          const max = box1.max;
+          // 计算每个轴的长度和一半长度
+          const sizeX = max.x - min.x;
+          const sizeY = max.y - min.y;
+          const sizeZ = max.z - min.z;
+
+          const leftCenter = new THREE.Vector3(
+            min.x + (sizeX / 4) * 1,
+            min.y + (sizeY / 4) * 1,
+            min.z + (sizeZ / 4) * 2
+          );
+
+          const rightCenter = new THREE.Vector3(
+            min.x + (sizeX / 4) * 3,
+            min.y + (sizeY / 4) * 3,
+            min.z + (sizeZ / 4) * 2
+          );
+
           box1.getCenter(center1);
 
           const mesh = group.getObjectByName("paper (1)");
@@ -118,11 +115,21 @@ export default {
             group.position.x -= offsetX;
             group.position.y -= offsetY;
             group.position.z -= offsetZ;
+          } else if (leftCenter.distanceTo(center2) < 200) {
+            const offsetX = center2.x - leftCenter.x;
+            const offsetY = center2.y - leftCenter.y;
+            const offsetZ = center2.z - leftCenter.z;
+            group.position.x -= offsetX;
+            group.position.y -= offsetY;
+            group.position.z -= offsetZ;
+          } else if (rightCenter.distanceTo(center2) < 200) {
+            const offsetX = center2.x - rightCenter.x;
+            const offsetY = center2.y - rightCenter.y;
+            const offsetZ = center2.z - rightCenter.z;
+            group.position.x -= offsetX;
+            group.position.y -= offsetY;
+            group.position.z -= offsetZ;
           }
-
-          // const box3 = new THREE.Box3().setFromObject(group);
-          // const boxHelper = new THREE.Box3Helper(box3, 0xffff00);
-          // scene.add(boxHelper)
         });
 
         // 监听拖动开始事件
