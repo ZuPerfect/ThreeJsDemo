@@ -141,6 +141,11 @@ export const routes = [
     name: "CabinetPlacement",
     component: () => import("../components/CabinetPlacement.vue"),
   },
+  {
+    path: "/DisassembleModel",
+    name: "DisassembleModel",
+    component: () => import("../components/DisassembleModel.vue"),
+  }
 ];
 // 创建路由
 const router = createRouter({
