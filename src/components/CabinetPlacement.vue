@@ -20,6 +20,7 @@ import { DragControls } from "three/addons/controls/DragControls.js";
 
 // 定义一些常量
 const stats = new Stats();
+const SNAP_BUFFER = 100;
 const width = window.innerWidth;
 const height = window.innerHeight;
 // 模型路径
@@ -98,7 +99,7 @@ export default {
     addDirectionalLight(scene);
 
     /*--------------------添加辅助坐标系--------------------*/
-    // addAxesHelper(scene);
+    addAxesHelper(scene);
 
     /*---------------------添加辅助网格---------------------*/
     const grid = new THREE.GridHelper(5000, 50, 0xc1c1c1, 0x8d8d8d);
@@ -116,9 +117,13 @@ export default {
       const obj3Loader = loaderObj(obj1Path);
       Promise.all([obj1Loader, obj2Loader, obj3Loader]).then((groups) => {
         let offset = 0;
-        groups.forEach((group) => {
+        groups.forEach((group, i) => {
           group.rotation.x += -Math.PI / 2;
           group.position.z += offset;
+          // 将第三个模型沿Y轴再旋转90度
+          if (i === 2) {
+            group.rotation.z += Math.PI / 2;
+          }
           offset += 400;
         });
 
@@ -153,12 +158,13 @@ export default {
             controls.enabled = true;
             enableControls(dragControlList);
             if (i === 0 || i === 2) {
-              const group = event.object;
+              const currentDragObj = event.object;
               const snapMesh = groups[1].getObjectByName("bottom paper (1)");
-              const center1 = new THREE.Vector3();
-              const box1 = new THREE.Box3().setFromObject(snapMesh);
-              const min = box1.min;
-              const max = box1.max;
+              const snapMeshBoxCenter = new THREE.Vector3();
+              const snapMeshBox = new THREE.Box3().setFromObject(snapMesh);
+              snapMeshBox.getCenter(snapMeshBoxCenter);
+              const min = snapMeshBox.min;
+              const max = snapMeshBox.max;
               // 计算每个轴的长度和一半长度
               const sizeX = max.x - min.x;
               const sizeY = max.y - min.y;
@@ -176,34 +182,49 @@ export default {
                 min.z + (sizeZ / 4) * 2
               );
 
-              box1.getCenter(center1);
+              const currentDragSnapFaceMesh =
+                currentDragObj.getObjectByName("paper (1)");
+              const currentDragSnapFaceMeshCenter = new THREE.Vector3();
+              const currentDragSnapFaceMeshBox = new THREE.Box3().setFromObject(
+                currentDragSnapFaceMesh
+              );
+              currentDragSnapFaceMeshBox.getCenter(
+                currentDragSnapFaceMeshCenter
+              );
 
-              const mesh = group.getObjectByName("paper (1)");
-              const center2 = new THREE.Vector3();
-              const box2 = new THREE.Box3().setFromObject(mesh);
-              box2.getCenter(center2);
-
-              if (center1.distanceTo(center2) < 200) {
-                const offsetX = center2.x - center1.x;
-                const offsetY = center2.y - center1.y;
-                const offsetZ = center2.z - center1.z;
-                group.position.x -= offsetX;
-                group.position.y -= offsetY;
-                group.position.z -= offsetZ;
-              } else if (leftCenter.distanceTo(center2) < 200) {
-                const offsetX = center2.x - leftCenter.x;
-                const offsetY = center2.y - leftCenter.y;
-                const offsetZ = center2.z - leftCenter.z;
-                group.position.x -= offsetX;
-                group.position.y -= offsetY;
-                group.position.z -= offsetZ;
-              } else if (rightCenter.distanceTo(center2) < 200) {
-                const offsetX = center2.x - rightCenter.x;
-                const offsetY = center2.y - rightCenter.y;
-                const offsetZ = center2.z - rightCenter.z;
-                group.position.x -= offsetX;
-                group.position.y -= offsetY;
-                group.position.z -= offsetZ;
+              if (
+                snapMeshBoxCenter.distanceTo(currentDragSnapFaceMeshCenter) <
+                SNAP_BUFFER
+              ) {
+                const offsetX =
+                  currentDragSnapFaceMeshCenter.x - snapMeshBoxCenter.x;
+                const offsetY =
+                  currentDragSnapFaceMeshCenter.y - snapMeshBoxCenter.y;
+                const offsetZ =
+                  currentDragSnapFaceMeshCenter.z - snapMeshBoxCenter.z;
+                currentDragObj.position.x -= offsetX;
+                currentDragObj.position.y -= offsetY;
+                currentDragObj.position.z -= offsetZ;
+              } else if (
+                leftCenter.distanceTo(currentDragSnapFaceMeshCenter) <
+                SNAP_BUFFER
+              ) {
+                const offsetX = currentDragSnapFaceMeshCenter.x - leftCenter.x;
+                const offsetY = currentDragSnapFaceMeshCenter.y - leftCenter.y;
+                const offsetZ = currentDragSnapFaceMeshCenter.z - leftCenter.z;
+                currentDragObj.position.x -= offsetX;
+                currentDragObj.position.y -= offsetY;
+                currentDragObj.position.z -= offsetZ;
+              } else if (
+                rightCenter.distanceTo(currentDragSnapFaceMeshCenter) <
+                SNAP_BUFFER
+              ) {
+                const offsetX = currentDragSnapFaceMeshCenter.x - rightCenter.x;
+                const offsetY = currentDragSnapFaceMeshCenter.y - rightCenter.y;
+                const offsetZ = currentDragSnapFaceMeshCenter.z - rightCenter.z;
+                currentDragObj.position.x -= offsetX;
+                currentDragObj.position.y -= offsetY;
+                currentDragObj.position.z -= offsetZ;
               }
             }
           });
