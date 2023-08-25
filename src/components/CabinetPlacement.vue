@@ -157,12 +157,12 @@ export default {
               min.y + (sizeY / objConfig[objType].centerStep) * 3,
               min.z + (sizeZ / objConfig[objType].centerStep) * 2
             );
-            topFaceCenters.push(leftCenter, rightCenter);
+            snapMeshBox.getCenter(snapMeshBoxCenter);
+            topFaceCenters.push(leftCenter, rightCenter, snapMeshBoxCenter);
           } else {
             snapMeshBox.getCenter(snapMeshBoxCenter);
+            topFaceCenters.push(snapMeshBoxCenter);
           }
-
-          topFaceCenters.push(snapMeshBoxCenter);
         });
 
         const curMoveObjType = curMoveObj.userData.type;
