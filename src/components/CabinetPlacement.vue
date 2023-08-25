@@ -36,6 +36,7 @@ const objConfig = {
   obj2: {
     topFaceName: "bottom paper (1)",
     bottomFaceName: "paper bottom (1)",
+    centerStep: 4,
   },
 };
 
@@ -137,7 +138,30 @@ export default {
           const snapMesh = obj.getObjectByName(objConfig[objType].topFaceName);
           const snapMeshBoxCenter = new THREE.Vector3();
           const snapMeshBox = new THREE.Box3().setFromObject(snapMesh);
-          snapMeshBox.getCenter(snapMeshBoxCenter);
+          if (objConfig[objType].centerStep) {
+            const min = snapMeshBox.min;
+            const max = snapMeshBox.max;
+            // 计算每个轴的长度和一半长度
+            const sizeX = max.x - min.x;
+            const sizeY = max.y - min.y;
+            const sizeZ = max.z - min.z;
+
+            const leftCenter = new THREE.Vector3(
+              min.x + (sizeX / objConfig[objType].centerStep) * 1,
+              min.y + (sizeY / objConfig[objType].centerStep) * 1,
+              min.z + (sizeZ / objConfig[objType].centerStep) * 2
+            );
+
+            const rightCenter = new THREE.Vector3(
+              min.x + (sizeX / objConfig[objType].centerStep) * 3,
+              min.y + (sizeY / objConfig[objType].centerStep) * 3,
+              min.z + (sizeZ / objConfig[objType].centerStep) * 2
+            );
+            topFaceCenters.push(leftCenter, rightCenter);
+          } else {
+            snapMeshBox.getCenter(snapMeshBoxCenter);
+          }
+
           topFaceCenters.push(snapMeshBoxCenter);
         });
 
