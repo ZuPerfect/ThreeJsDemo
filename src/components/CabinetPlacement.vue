@@ -3,44 +3,50 @@
  * @作 者: 朱鹏飞
 -->
 
-<template></template>
+<template>
+  <div class="btns">
+    <div class="btn" @click="addObjectModel(1)">添加模型1</div>
+    <div class="btn" @click="addObjectModel(2)">添加模型2</div>
+  </div>
+</template>
 
 <script>
 import { onMounted } from "vue";
 import * as THREE from "three";
 import Stats from "three/addons/libs/stats.module.js";
 import { OBJLoader } from "three/addons/loaders/OBJLoader";
-import {
-  addStats,
-  addOrbitControls,
-  addAxesHelper,
-  addDirectionalLight,
-} from "../js/common.js";
+import { addStats, addOrbitControls, addAxesHelper, addDirectionalLight } from "../js/common.js";
 import { DragControls } from "three/addons/controls/DragControls.js";
 
 // 定义一些常量
 const stats = new Stats();
-const SNAP_BUFFER = 100;
+const SNAP_BUFFER = 200;
 const width = window.innerWidth;
 const height = window.innerHeight;
 // 模型路径
-const obj1Path = new URL(
-  "../assets/objs/small cabinet for program v2.obj",
-  import.meta.url
-).href;
-const obj2Path = new URL(
-  "../assets/objs/wide wide cabinet for program v2.obj",
-  import.meta.url
-).href;
+const obj1Path = new URL("../assets/objs/small cabinet for program v2.obj", import.meta.url).href;
+const obj2Path = new URL("../assets/objs/wide wide cabinet for program v2.obj", import.meta.url).href;
+const objList = [];
+const dragControlList = [];
+const objConfig = {
+  obj1: {
+    topFaceName: "paper (1):1",
+    bottomFaceName: "paper (1)",
+  },
+  obj2: {
+    topFaceName: "bottom paper (1)",
+    bottomFaceName: "paper bottom (1)",
+  },
+};
 
 /**
  * 加载模型
  * @param {} objPath 模型路径
  */
-const loaderObj = (objPath) => {
+const loaderObj = objPath => {
   return new Promise((resolve, reject) => {
     const loader = new OBJLoader();
-    loader.load(objPath, (obj) => {
+    loader.load(objPath, obj => {
       resolve(obj);
     });
   });
@@ -51,22 +57,16 @@ const loaderObj = (objPath) => {
  * @param {} dragControlList 所有的拖动控制器数组
  * @param {} currentIdx 当前正在使用的控制器索引
  */
-const disableControls = (dragControlList, currentIdx) => {
-  dragControlList.forEach((c, idx) => {
-    if (currentIdx !== idx) {
-      c.enabled = false;
-    }
-  });
+const disableControls = dragControlList => {
+  dragControlList.forEach(c => (c.enabled = false));
 };
 
 /**
  * 激活所有的拖动控制器
  * @param {} dragControlList 所有的拖动控制器数组
  */
-const enableControls = (dragControlList) => {
-  dragControlList.forEach((c) => {
-    c.enabled = true;
-  });
+const enableControls = dragControlList => {
+  dragControlList.forEach(c => (c.enabled = true));
 };
 
 export default {
@@ -109,127 +109,81 @@ export default {
     // 添加交互控制器
     const controls = addOrbitControls(scene, camera, renderer);
 
-    /*--------------------obj模型加载--------------------*/
-    const loadObj = () => {
-      const dragControlList = [];
-      const obj1Loader = loaderObj(obj1Path);
-      const obj2Loader = loaderObj(obj2Path);
-      const obj3Loader = loaderObj(obj1Path);
-      Promise.all([obj1Loader, obj2Loader, obj3Loader]).then((groups) => {
-        let offset = 0;
-        groups.forEach((group, i) => {
-          group.rotation.x += -Math.PI / 2;
-          group.position.z += offset;
-          // 将第三个模型沿Y轴再旋转90度
-          if (i === 2) {
-            group.rotation.z += Math.PI / 2;
-          }
-          offset += 400;
-        });
+    const addDragControls = obj => {
+      // 为每一个模型创建一个拖动控制器
+      const dragControl = new DragControls([obj], camera, renderer.domElement);
+      // 设置拖动整个模型整体
+      dragControl.transformGroup = true;
 
-        scene.add(...groups);
-
-        for (let i = 0; i < groups.length; i++) {
-          // 为每一个模型创建一个拖动控制器
-          const dragControl = new DragControls(
-            [groups[i]],
-            camera,
-            renderer.domElement
-          );
-          // 设置拖动整个模型整体
-          dragControl.transformGroup = true;
-          // 将当前模型的控制器添加到控制器数组中
-          dragControlList.push(dragControl);
-        }
-
-        // 遍历所有控制器，为控制器添加事件监听
-        dragControlList.forEach((dragControl, i) => {
-          dragControl.addEventListener("dragstart", function (event) {
-            // 为了避免交互控件冲突，这里禁用场景交互控件
-            controls.enabled = false;
-            disableControls(dragControlList, i);
-          });
-          dragControl.addEventListener("drag", function (event) {
-            controls.enabled = false;
-            disableControls(dragControlList, i);
-          });
-          dragControl.addEventListener("dragend", function (event) {
-            // 拖动结束之后，恢复场景交互控件
-            controls.enabled = true;
-            enableControls(dragControlList);
-            if (i === 0 || i === 2) {
-              const currentDragObj = event.object;
-              const snapMesh = groups[1].getObjectByName("bottom paper (1)");
-              const snapMeshBoxCenter = new THREE.Vector3();
-              const snapMeshBox = new THREE.Box3().setFromObject(snapMesh);
-              snapMeshBox.getCenter(snapMeshBoxCenter);
-              const min = snapMeshBox.min;
-              const max = snapMeshBox.max;
-              // 计算每个轴的长度和一半长度
-              const sizeX = max.x - min.x;
-              const sizeY = max.y - min.y;
-              const sizeZ = max.z - min.z;
-
-              const leftCenter = new THREE.Vector3(
-                min.x + (sizeX / 4) * 1,
-                min.y + (sizeY / 4) * 1,
-                min.z + (sizeZ / 4) * 2
-              );
-
-              const rightCenter = new THREE.Vector3(
-                min.x + (sizeX / 4) * 3,
-                min.y + (sizeY / 4) * 3,
-                min.z + (sizeZ / 4) * 2
-              );
-
-              const currentDragSnapFaceMesh =
-                currentDragObj.getObjectByName("paper (1)");
-              const currentDragSnapFaceMeshCenter = new THREE.Vector3();
-              const currentDragSnapFaceMeshBox = new THREE.Box3().setFromObject(
-                currentDragSnapFaceMesh
-              );
-              currentDragSnapFaceMeshBox.getCenter(
-                currentDragSnapFaceMeshCenter
-              );
-
-              if (
-                snapMeshBoxCenter.distanceTo(currentDragSnapFaceMeshCenter) <
-                SNAP_BUFFER
-              ) {
-                const offsetX =
-                  currentDragSnapFaceMeshCenter.x - snapMeshBoxCenter.x;
-                const offsetY =
-                  currentDragSnapFaceMeshCenter.y - snapMeshBoxCenter.y;
-                const offsetZ =
-                  currentDragSnapFaceMeshCenter.z - snapMeshBoxCenter.z;
-                currentDragObj.position.x -= offsetX;
-                currentDragObj.position.y -= offsetY;
-                currentDragObj.position.z -= offsetZ;
-              } else if (
-                leftCenter.distanceTo(currentDragSnapFaceMeshCenter) <
-                SNAP_BUFFER
-              ) {
-                const offsetX = currentDragSnapFaceMeshCenter.x - leftCenter.x;
-                const offsetY = currentDragSnapFaceMeshCenter.y - leftCenter.y;
-                const offsetZ = currentDragSnapFaceMeshCenter.z - leftCenter.z;
-                currentDragObj.position.x -= offsetX;
-                currentDragObj.position.y -= offsetY;
-                currentDragObj.position.z -= offsetZ;
-              } else if (
-                rightCenter.distanceTo(currentDragSnapFaceMeshCenter) <
-                SNAP_BUFFER
-              ) {
-                const offsetX = currentDragSnapFaceMeshCenter.x - rightCenter.x;
-                const offsetY = currentDragSnapFaceMeshCenter.y - rightCenter.y;
-                const offsetZ = currentDragSnapFaceMeshCenter.z - rightCenter.z;
-                currentDragObj.position.x -= offsetX;
-                currentDragObj.position.y -= offsetY;
-                currentDragObj.position.z -= offsetZ;
-              }
-            }
-          });
-        });
+      dragControl.addEventListener("dragstart", function (event) {
+        // 为了避免交互控件冲突，这里禁用场景交互控件
+        controls.enabled = false;
+        disableControls(dragControlList);
+        this.enabled = true;
       });
+      dragControl.addEventListener("drag", function (event) {
+        controls.enabled = false;
+      });
+      dragControl.addEventListener("dragend", function (event) {
+        // 拖动结束之后，恢复场景交互控件
+        controls.enabled = true;
+        enableControls(dragControlList);
+        const curMoveObj = event.object;
+        // 除了移动的这个，其他的模型的顶面都是待吸附的
+        const notCurObjList = objList.filter(obj => curMoveObj.uuid !== obj.uuid);
+        const topFaceCenters = [];
+        notCurObjList.forEach(obj => {
+          const objType = obj.userData.type;
+          const snapMesh = obj.getObjectByName(objConfig[objType].topFaceName);
+          const snapMeshBoxCenter = new THREE.Vector3();
+          const snapMeshBox = new THREE.Box3().setFromObject(snapMesh);
+          snapMeshBox.getCenter(snapMeshBoxCenter);
+          topFaceCenters.push(snapMeshBoxCenter);
+        });
+
+        const curMoveObjType = curMoveObj.userData.type;
+        const currentDragSnapFaceMesh = curMoveObj.getObjectByName(objConfig[curMoveObjType].bottomFaceName);
+        const currentDragSnapFaceMeshCenter = new THREE.Vector3();
+        const currentDragSnapFaceMeshBox = new THREE.Box3().setFromObject(currentDragSnapFaceMesh);
+        currentDragSnapFaceMeshBox.getCenter(currentDragSnapFaceMeshCenter);
+        const okCenter = topFaceCenters.find(c => c.distanceTo(currentDragSnapFaceMeshCenter) < SNAP_BUFFER);
+        if (okCenter) {
+          const offsetX = currentDragSnapFaceMeshCenter.x - okCenter.x;
+          const offsetY = currentDragSnapFaceMeshCenter.y - okCenter.y;
+          const offsetZ = currentDragSnapFaceMeshCenter.z - okCenter.z;
+          curMoveObj.position.x -= offsetX;
+          curMoveObj.position.y -= offsetY;
+          curMoveObj.position.z -= offsetZ;
+        }
+      });
+
+      // 将当前模型的控制器添加到控制器数组中
+      dragControlList.push(dragControl);
+    };
+
+    /*--------------------obj模型加载--------------------*/
+    const addObjectModel = modelType => {
+      if (modelType === 1) {
+        loaderObj(obj1Path).then(obj => {
+          obj.rotation.x += -Math.PI / 2;
+          obj.userData = {
+            type: "obj1",
+          };
+          addDragControls(obj);
+          objList.push(obj);
+          scene.add(obj);
+        });
+      } else if (modelType === 2) {
+        loaderObj(obj2Path).then(obj => {
+          obj.rotation.x += -Math.PI / 2;
+          obj.userData = {
+            type: "obj2",
+          };
+          addDragControls(obj);
+          objList.push(obj);
+          scene.add(obj);
+        });
+      }
     };
 
     /**
@@ -238,7 +192,7 @@ export default {
     const init = () => {
       // 将渲染器所属dom添加到body中
       document.body.appendChild(renderer.domElement);
-      loadObj();
+      // loadObj();
       // 添加性能监控（左上角控件）
       addStats(stats);
       // 监听窗口大小，保证窗口调整的时候渲染器正常渲染
@@ -266,7 +220,24 @@ export default {
       render();
     });
 
-    return {};
+    return {
+      addObjectModel,
+    };
   },
 };
 </script>
+<style>
+.btns {
+  display: flex;
+  position: absolute;
+  top: 10px;
+  right: 500px;
+  z-index: 2;
+}
+.btn {
+  cursor: pointer;
+  background-color: bisque;
+  padding: 5px 20px;
+  margin: 5px;
+}
+</style>
