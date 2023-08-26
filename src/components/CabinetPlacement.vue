@@ -132,7 +132,8 @@ export default {
         const curMoveObj = event.object;
         // 除了移动的这个，其他的模型的顶面都是待吸附的
         const notCurObjList = objList.filter(obj => curMoveObj.uuid !== obj.uuid);
-        const snapFaceCenters = [];
+        const snapTopCenters = [];
+        const snapBottomCenters = [];
         notCurObjList.forEach(obj => {
           const objType = obj.userData.type;
           const snapMesh = obj.getObjectByName(objConfig[objType].topFaceName);
@@ -158,10 +159,10 @@ export default {
               min.z + (sizeZ / objConfig[objType].centerStep) * 2
             );
             snapMeshBox.getCenter(snapMeshBoxCenter);
-            snapFaceCenters.push(leftCenter, rightCenter, snapMeshBoxCenter);
+            snapTopCenters.push(leftCenter, rightCenter, snapMeshBoxCenter);
           } else {
             snapMeshBox.getCenter(snapMeshBoxCenter);
-            snapFaceCenters.push(snapMeshBoxCenter);
+            snapTopCenters.push(snapMeshBoxCenter);
           }
         });
 
@@ -169,24 +170,62 @@ export default {
         const currentDragSnapFaceMesh = curMoveObj.getObjectByName(objConfig[curMoveObjType].bottomFaceName);
         const currentDragSnapFaceMeshCenter = new THREE.Vector3();
         const currentDragSnapFaceMeshBox = new THREE.Box3().setFromObject(currentDragSnapFaceMesh);
-        currentDragSnapFaceMeshBox.getCenter(currentDragSnapFaceMeshCenter);
-        const centerDisList = snapFaceCenters.map(c => {
+        if (objConfig[curMoveObjType].centerStep) {
+          const min = currentDragSnapFaceMeshBox.min;
+          const max = currentDragSnapFaceMeshBox.max;
+          // 计算每个轴的长度和一半长度
+          const sizeX = max.x - min.x;
+          const sizeY = max.y - min.y;
+          const sizeZ = max.z - min.z;
+
+          const leftCenter = new THREE.Vector3(
+            min.x + (sizeX / objConfig[curMoveObjType].centerStep) * 1,
+            min.y + (sizeY / objConfig[curMoveObjType].centerStep) * 1,
+            min.z + (sizeZ / objConfig[curMoveObjType].centerStep) * 2
+          );
+
+          const rightCenter = new THREE.Vector3(
+            min.x + (sizeX / objConfig[curMoveObjType].centerStep) * 3,
+            min.y + (sizeY / objConfig[curMoveObjType].centerStep) * 3,
+            min.z + (sizeZ / objConfig[curMoveObjType].centerStep) * 2
+          );
+          currentDragSnapFaceMeshBox.getCenter(currentDragSnapFaceMeshCenter);
+          snapBottomCenters.push(leftCenter, rightCenter, currentDragSnapFaceMeshCenter);
+        } else {
+          currentDragSnapFaceMeshBox.getCenter(currentDragSnapFaceMeshCenter);
+          snapBottomCenters.push(currentDragSnapFaceMeshCenter);
+        }
+
+        const topCenterDisList = snapTopCenters.map(c => {
+          const dArr = snapBottomCenters.map(bc => {
+            return {
+              center: bc,
+              dis: bc.distanceTo(c),
+            };
+          });
+          dArr.sort((a, b) => a.dis - b.dis);
+          const okBcenter = dArr[0].center;
           return {
             center: c,
-            dis: c.distanceTo(currentDragSnapFaceMeshCenter),
+            bCenter: okBcenter,
+            dis: c.distanceTo(okBcenter),
           };
         });
+
         // 根据距离对中心点进行排序
-        centerDisList.sort((a, b) => a.dis - b.dis);
-        const minDis = centerDisList[0]?.dis;
+        topCenterDisList.sort((a, b) => a.dis - b.dis);
+        const minDis = topCenterDisList[0]?.dis;
         if (minDis < SNAP_BUFFER) {
-          const minDisCenter = centerDisList[0]?.center;
-          const offsetX = currentDragSnapFaceMeshCenter.x - minDisCenter.x;
-          const offsetY = currentDragSnapFaceMeshCenter.y - minDisCenter.y;
-          const offsetZ = currentDragSnapFaceMeshCenter.z - minDisCenter.z;
-          curMoveObj.position.x -= offsetX;
-          curMoveObj.position.y -= offsetY;
-          curMoveObj.position.z -= offsetZ;
+          const minDisCenter = topCenterDisList[0]?.center;
+          const bCenter = topCenterDisList[0]?.bCenter;
+          if (bCenter) {
+            const offsetX = bCenter.x - minDisCenter.x;
+            const offsetY = bCenter.y - minDisCenter.y;
+            const offsetZ = bCenter.z - minDisCenter.z;
+            curMoveObj.position.x -= offsetX;
+            curMoveObj.position.y -= offsetY;
+            curMoveObj.position.z -= offsetZ;
+          }
         }
       });
 
