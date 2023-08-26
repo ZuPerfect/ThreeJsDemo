@@ -132,7 +132,7 @@ export default {
         const curMoveObj = event.object;
         // 除了移动的这个，其他的模型的顶面都是待吸附的
         const notCurObjList = objList.filter(obj => curMoveObj.uuid !== obj.uuid);
-        const topFaceCenters = [];
+        const snapFaceCenters = [];
         notCurObjList.forEach(obj => {
           const objType = obj.userData.type;
           const snapMesh = obj.getObjectByName(objConfig[objType].topFaceName);
@@ -158,10 +158,10 @@ export default {
               min.z + (sizeZ / objConfig[objType].centerStep) * 2
             );
             snapMeshBox.getCenter(snapMeshBoxCenter);
-            topFaceCenters.push(leftCenter, rightCenter, snapMeshBoxCenter);
+            snapFaceCenters.push(leftCenter, rightCenter, snapMeshBoxCenter);
           } else {
             snapMeshBox.getCenter(snapMeshBoxCenter);
-            topFaceCenters.push(snapMeshBoxCenter);
+            snapFaceCenters.push(snapMeshBoxCenter);
           }
         });
 
@@ -170,11 +170,20 @@ export default {
         const currentDragSnapFaceMeshCenter = new THREE.Vector3();
         const currentDragSnapFaceMeshBox = new THREE.Box3().setFromObject(currentDragSnapFaceMesh);
         currentDragSnapFaceMeshBox.getCenter(currentDragSnapFaceMeshCenter);
-        const okCenter = topFaceCenters.find(c => c.distanceTo(currentDragSnapFaceMeshCenter) < SNAP_BUFFER);
-        if (okCenter) {
-          const offsetX = currentDragSnapFaceMeshCenter.x - okCenter.x;
-          const offsetY = currentDragSnapFaceMeshCenter.y - okCenter.y;
-          const offsetZ = currentDragSnapFaceMeshCenter.z - okCenter.z;
+        const centerDisList = snapFaceCenters.map(c => {
+          return {
+            center: c,
+            dis: c.distanceTo(currentDragSnapFaceMeshCenter),
+          };
+        });
+        // 根据距离对中心点进行排序
+        centerDisList.sort((a, b) => a.dis - b.dis);
+        const minDis = centerDisList[0]?.dis;
+        if (minDis < SNAP_BUFFER) {
+          const minDisCenter = centerDisList[0]?.center;
+          const offsetX = currentDragSnapFaceMeshCenter.x - minDisCenter.x;
+          const offsetY = currentDragSnapFaceMeshCenter.y - minDisCenter.y;
+          const offsetZ = currentDragSnapFaceMeshCenter.z - minDisCenter.z;
           curMoveObj.position.x -= offsetX;
           curMoveObj.position.y -= offsetY;
           curMoveObj.position.z -= offsetZ;
@@ -216,7 +225,6 @@ export default {
     const init = () => {
       // 将渲染器所属dom添加到body中
       document.body.appendChild(renderer.domElement);
-      // loadObj();
       // 添加性能监控（左上角控件）
       addStats(stats);
       // 监听窗口大小，保证窗口调整的时候渲染器正常渲染
