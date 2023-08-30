@@ -141,6 +141,11 @@ export const routes = [
     name: "DisassembleModel",
     component: () => import("../components/DisassembleModel.vue"),
   },
+  {
+    path: "/Bone",
+    name: "Bone",
+    component: () => import("../components/Bone.vue"),
+  },
 ];
 // 创建路由
 const router = createRouter({
