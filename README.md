@@ -49,6 +49,10 @@ npm run build
 ![示例图片](./public/review/animate2.gif)
 ![示例图片](./public/review/Bone.png)
 
+### 案例
+
+![柜体摆放案例](./public/demo/柜体摆放案例.gif)
+
 ### 遗留
 
 生成曲线，几何体章节下的：
