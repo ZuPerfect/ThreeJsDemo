@@ -63,3 +63,5 @@ npm run build
 4. 山脉地形高度可视化
 
 这几节暂时没有学习，后面补学后删除该遗留批注
+### 引用
+[http://www.webgl3d.cn/pages/4a14ce/](http://www.webgl3d.cn/pages/4a14ce/)
